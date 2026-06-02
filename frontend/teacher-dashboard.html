@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',sans-serif; background:#f0f2f5; }
+    .navbar {
+      background:linear-gradient(135deg,#155724,#1e8449);
+      color:white; padding:16px 32px;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .navbar h2 { font-size:20px; }
+    .btn-logout {
+      background:#e74c3c; color:white; border:none;
+      padding:8px 20px; border-radius:6px; cursor:pointer;
+    }
+    .container { padding:24px 32px; }
+    .stats-grid {
+      display:grid; grid-template-columns:repeat(4,1fr);
+      gap:16px; margin-bottom:24px;
+    }
+    .stat-card {
+      background:white; border-radius:12px; padding:20px;
+      text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    }
+    .stat-card .number {
+      font-size:32px; font-weight:700; color:#155724;
+    }
+    .stat-card .label {
+      font-size:13px; color:#888; margin-top:4px;
+    }
+    .tabs { display:flex; gap:8px; margin-bottom:24px; }
+    .tab {
+      padding:10px 20px; border:2px solid #e0e0e0;
+      border-radius:8px; cursor:pointer;
+      font-size:14px; background:white;
+      font-weight:600; color:#666;
+    }
+    .tab.active {
+      background:#155724; color:white; border-color:#155724;
+    }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+    .section-card {
+      background:white; border-radius:12px;
+      padding:24px; margin-bottom:24px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    }
+    .section-card h3 {
+      font-size:17px; color:#1a1a2e; margin-bottom:16px;
+      border-bottom:2px solid #f0f2f5; padding-bottom:10px;
+    }
+    table { width:100%; border-collapse:collapse; font-size:14px; }
+    th {
+      background:#155724; color:white;
+      padding:12px 16px; text-align:left;
+    }
+    td { padding:12px 16px; border-bottom:1px solid #f0f2f5; }
+    tr:hover td { background:#f8f9fa; }
+    .badge {
+      padding:4px 12px; border-radius:20px;
+      font-size:12px; font-weight:600;
+    }
+    .bg-danger  { background:#ffe0e0; color:#c0392b; }
+    .bg-warning { background:#fff3cd; color:#856404; }
+    .bg-success { background:#d4edda; color:#155724; }
+    .form-group { margin-bottom:16px; }
+    .form-group label {
+      display:block; font-size:12px; font-weight:700;
+      color:#555; margin-bottom:6px; text-transform:uppercase;
+    }
+    .form-group input, .form-group select {
+      width:100%; padding:10px 14px;
+      border:2px solid #e0e0e0; border-radius:8px;
+      font-size:14px; outline:none;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color:#155724;
+    }
+    .form-grid-3 {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:16px;
+    }
+    .form-grid-2 {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:16px;
+    }
+    .btn-submit {
+      background:#155724; color:white; border:none;
+      padding:12px 28px; border-radius:8px;
+      cursor:pointer; font-size:14px; font-weight:600;
+      margin-top:8px;
+    }
+    .btn-submit:hover { background:#0d3d18; }
+    .btn-notify {
+      background:#e74c3c; color:white; border:none;
+      padding:6px 12px; border-radius:6px;
+      cursor:pointer; font-size:12px;
+    }
+    .btn-edit {
+      background:#e67e22; color:white; border:none;
+      padding:6px 12px; border-radius:6px;
+      cursor:pointer; font-size:12px; margin-right:4px;
+    }
+    .btn-view {
+      background:#0f3460; color:white; border:none;
+      padding:6px 12px; border-radius:6px;
+      cursor:pointer; font-size:12px; margin-left:4px;
+    }
+    .ok-msg {
+      color:#27ae60; font-size:13px;
+      margin-top:10px; display:none;
+      padding:10px; background:#d4edda;
+      border-radius:8px;
+    }
+    .err-msg {
+      color:#c0392b; font-size:13px;
+      margin-top:10px; display:none;
+      padding:10px; background:#ffe0e0;
+      border-radius:8px;
+    }
+    .section-divider {
+      font-size:15px; font-weight:700;
+      color:#155724; margin:20px 0 12px;
+      padding-bottom:6px;
+      border-bottom:2px solid #d4edda;
+    }
+    .empty-state {
+      text-align:center; color:#999;
+      padding:30px; font-size:14px;
+    }
+    .loading {
+      text-align:center; color:#888;
+      padding:20px; font-size:14px;
+    }
+    .modal-overlay {
+      display:none; position:fixed;
+      top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.5);
+      z-index:1000; align-items:center;
+      justify-content:center;
+    }
+    .modal-overlay.active { display:flex; }
+    .modal {
+      background:white; border-radius:16px;
+      padding:32px; max-width:600px;
+      width:90%; position:relative;
+      max-height:80vh; overflow-y:auto;
+    }
+    .modal h3 {
+      font-size:18px; color:#1a1a2e;
+      margin-bottom:16px;
+    }
+    .modal-close {
+      position:absolute; top:16px; right:16px;
+      background:#f0f2f5; border:none;
+      width:32px; height:32px; border-radius:50%;
+      cursor:pointer; font-size:16px;
+    }
+    .detail-grid {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:12px; margin-bottom:16px;
+    }
+    .detail-item {
+      background:#f8f9fa; border-radius:8px; padding:12px;
+    }
+    .detail-item .d-label {
+      font-size:11px; color:#888;
+      text-transform:uppercase; font-weight:700;
+    }
+    .detail-item .d-value {
+      font-size:15px; color:#1a1a2e;
+      font-weight:600; margin-top:4px;
+    }
+    .warning-box {
+      background:#fff3cd; border:2px solid #ffc107;
+      border-radius:10px; padding:16px;
+      margin-bottom:16px;
+    }
+    .warning-box p {
+      color:#856404; font-size:14px; margin-bottom:8px;
+    }
+    .action-btns {
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:12px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Student Detail Modal -->
+<div class="modal-overlay" id="student-modal">
+  <div class="modal">
+    <button class="modal-close"
+            onclick="closeStudentModal()">✕</button>
+    <h3>👨‍🎓 Student Details</h3>
+    <div class="detail-grid" id="modal-details"></div>
+    <h4 style="margin-bottom:12px;color:#155724">
+      📝 Recent Marks
+    </h4>
+    <table>
+      <thead>
+        <tr>
+          <th>Subject</th><th>Exam</th>
+          <th>Score</th><th>%</th>
+        </tr>
+      </thead>
+      <tbody id="modal-marks"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Duplicate Marks Warning Modal -->
+<div class="modal-overlay" id="duplicate-modal">
+  <div class="modal">
+    <button class="modal-close"
+            onclick="closeDuplicateModal()">✕</button>
+    <h3>⚠️ Marks Already Exist!</h3>
+    <div class="warning-box">
+      <p id="duplicate-msg"></p>
+    </div>
+    <p style="color:#555;margin-bottom:16px;font-size:14px">
+      What would you like to do?
+    </p>
+    <div class="action-btns">
+      <button class="btn-submit"
+              style="background:#e67e22"
+              onclick="showUpdateForm()">
+        ✏️ Update Existing Marks
+      </button>
+      <button class="btn-submit"
+              style="background:#e74c3c"
+              onclick="deleteExistingMarks()">
+        🗑️ Delete & Re-enter
+      </button>
+      <button class="btn-submit"
+              style="background:#888"
+              onclick="closeDuplicateModal()">
+        ❌ Cancel
+      </button>
+    </div>
+    <div id="update-form"
+         style="display:none;margin-top:20px">
+      <div class="section-divider">
+        Enter New Marks
+      </div>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>New Marks Obtained</label>
+          <input type="number" id="update-obtained"
+                 placeholder="Enter new marks" min="0">
+        </div>
+        <div class="form-group">
+          <label>New Max Marks</label>
+          <input type="number" id="update-max"
+                 placeholder="Enter max marks" min="1">
+        </div>
+      </div>
+      <button class="btn-submit"
+              onclick="confirmUpdate()">
+        ✅ Confirm Update
+      </button>
+      <p class="err-msg" id="update-err"></p>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar">
+  <h2>👨‍🏫 Teacher Dashboard — EduTrack</h2>
+  <button class="btn-logout" onclick="logout()">
+    Logout
+  </button>
+</nav>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="number" id="total-students">—</div>
+      <div class="label">Total Students</div>
+    </div>
+    <div class="stat-card">
+      <div class="number" id="high-risk"
+           style="color:#e74c3c">—</div>
+      <div class="label">High Risk</div>
+    </div>
+    <div class="stat-card">
+      <div class="number" id="avg-att"
+           style="color:#27ae60">—</div>
+      <div class="label">Avg Attendance</div>
+    </div>
+    <div class="stat-card">
+      <div class="number" id="avg-marks"
+           style="color:#e67e22">—</div>
+      <div class="label">Avg Marks</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active"
+            onclick="switchTab('students',this)">
+      👥 Students
+    </button>
+    <button class="tab"
+            onclick="switchTab('addstudent',this)">
+      ➕ Add Student
+    </button>
+    <button class="tab"
+            onclick="switchTab('attendance',this)">
+      📋 Attendance
+    </button>
+    <button class="tab"
+            onclick="switchTab('marks',this)">
+      📝 Marks
+    </button>
+  </div>
+
+  <!-- STUDENTS TAB -->
+  <div class="tab-content active" id="tab-students">
+    <div class="section-card">
+      <h3>📊 Student Risk Overview</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Class</th>
+            <th>Roll No</th>
+            <th>Attendance %</th>
+            <th>Avg Marks %</th>
+            <th>Risk Level</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="students-tbody">
+          <tr>
+            <td colspan="8" class="loading">
+              Loading students...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ADD STUDENT TAB -->
+  <div class="tab-content" id="tab-addstudent">
+    <div class="section-card">
+      <h3>➕ Add New Student</h3>
+      <div class="section-divider">
+        👨‍🎓 Student Details
+      </div>
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>Student Full Name *</label>
+          <input type="text" id="new-name"
+                 placeholder="Enter full name">
+        </div>
+        <div class="form-group">
+          <label>Class Section *</label>
+          <input type="text" id="new-class"
+                 placeholder="e.g. 10-A, 4-B">
+        </div>
+        <div class="form-group">
+          <label>Roll Number</label>
+          <input type="text" id="new-roll"
+                 placeholder="e.g. R002">
+        </div>
+      </div>
+      <div class="section-divider">
+        🔐 Login Credentials
+      </div>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>Username *</label>
+          <input type="text" id="new-username"
+                 placeholder="Create login username">
+        </div>
+        <div class="form-group">
+          <label>Password *</label>
+          <input type="password" id="new-password"
+                 placeholder="Minimum 6 characters">
+        </div>
+      </div>
+      <div class="section-divider">
+        👨‍👩‍👧 Parent Details
+      </div>
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>Parent Name</label>
+          <input type="text" id="new-parent-name"
+                 placeholder="Parent full name">
+        </div>
+        <div class="form-group">
+          <label>Parent Email</label>
+          <input type="email" id="new-parent-email"
+                 placeholder="parent@email.com">
+        </div>
+        <div class="form-group">
+          <label>Parent Phone</label>
+          <input type="text" id="new-parent-phone"
+                 placeholder="9876543210">
+        </div>
+      </div>
+      <button class="btn-submit" onclick="addStudent()">
+        ➕ Add Student
+      </button>
+      <p class="ok-msg" id="add-ok">
+        ✅ Student added successfully!
+      </p>
+      <p class="err-msg" id="add-err"></p>
+    </div>
+  </div>
+
+  <!-- ATTENDANCE TAB -->
+  <div class="tab-content" id="tab-attendance">
+    <div class="section-card">
+      <h3>📋 Mark Attendance</h3>
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>Select Student *</label>
+          <select id="att-sid">
+            <option value="">-- Select Student --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date *</label>
+          <input type="date" id="att-date">
+        </div>
+        <div class="form-group">
+          <label>Status *</label>
+          <select id="att-status">
+            <option value="Present">✅ Present</option>
+            <option value="Absent">❌ Absent</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-submit"
+              onclick="submitAttendance()">
+        💾 Save Attendance
+      </button>
+      <p class="ok-msg" id="att-ok">
+        ✅ Attendance saved successfully!
+      </p>
+      <p class="err-msg" id="att-err"></p>
+    </div>
+
+    <div class="section-card">
+      <h3>📅 View Student Attendance</h3>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>Select Student</label>
+          <select id="view-att-sid">
+            <option value="">-- Select Student --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <button class="btn-submit"
+                  onclick="viewAttendance()"
+                  style="width:100%">
+            👁️ View Attendance
+          </button>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Status</th></tr>
+        </thead>
+        <tbody id="att-history-tbody">
+          <tr>
+            <td colspan="2" class="empty-state">
+              Select a student to view attendance
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MARKS TAB -->
+  <div class="tab-content" id="tab-marks">
+
+    <!-- Enter Marks -->
+    <div class="section-card">
+      <h3>📝 Enter Student Marks</h3>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>Select Student *</label>
+          <select id="m-sid" onchange="loadSubjects()">
+            <option value="">-- Select Student --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Select Subject *</label>
+          <select id="m-subject">
+            <option value="">
+              -- Select Student First --
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>Exam Name *</label>
+          <input type="text" id="m-exam"
+                 placeholder="e.g. Unit Test 1">
+        </div>
+        <div class="form-group">
+          <label>Marks Obtained *</label>
+          <input type="number" id="m-obtained"
+                 placeholder="e.g. 78" min="0">
+        </div>
+        <div class="form-group">
+          <label>Maximum Marks *</label>
+          <input type="number" id="m-max"
+                 placeholder="e.g. 100" min="1">
+        </div>
+      </div>
+      <button class="btn-submit" onclick="submitMarks()">
+        💾 Save Marks
+      </button>
+      <p class="ok-msg" id="marks-ok">
+        ✅ Marks saved successfully!
+      </p>
+      <p class="err-msg" id="marks-err"></p>
+    </div>
+
+    <!-- View and Manage Marks -->
+    <div class="section-card">
+      <h3>📊 View & Manage Student Marks</h3>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>Select Student</label>
+          <select id="view-marks-sid">
+            <option value="">-- Select Student --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <button class="btn-submit"
+                  onclick="viewMarks()"
+                  style="width:100%">
+            👁️ View Marks
+          </button>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Exam</th>
+            <th>Score</th>
+            <th>Percentage</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="marks-view-tbody">
+          <tr>
+            <td colspan="5" class="empty-state">
+              Select a student to view marks
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  const TOKEN = localStorage.getItem('jwt_token');
+  const BASE = 'http://localhost:5000/api/v1';
+  const ROLE = localStorage.getItem('user_role');
+  if (!TOKEN || ROLE !== 'teacher') {
+    window.location.href = 'index.html';
+  }
+
+  let allStudents = [];
+  let duplicateMarkId = null;
+  let pendingMarksData = null;
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'index.html';
+  }
+
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab')
+      .forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content')
+      .forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + name)
+      .classList.add('active');
+  }
+
+  async function apiFetch(url, method='GET', body=null) {
+    const opts = {
+      method,
+      headers: {
+        'Authorization': `Bearer ${TOKEN}`,
+        'Content-Type': 'application/json'
+      }
+    };
+    if (body) opts.body = JSON.stringify(body);
+    try {
+      const res = await fetch(BASE + url, opts);
+      return res.json();
+    } catch(e) {
+      console.error('API Error:', e);
+      return { error: 'Connection failed' };
+    }
+  }
+
+  function populateDropdowns(students) {
+    const dropdowns = [
+      'att-sid', 'view-att-sid',
+      'm-sid', 'view-marks-sid'
+    ];
+    dropdowns.forEach(id => {
+      const sel = document.getElementById(id);
+      sel.innerHTML =
+        '<option value="">-- Select Student --</option>';
+      students.forEach(s => {
+        sel.innerHTML +=
+          `<option value="${s.id}">
+            ${s.name} (${s.class_section})
+           </option>`;
+      });
+    });
+  }
+
+  async function loadStudents() {
+    const tbody =
+      document.getElementById('students-tbody');
+    tbody.innerHTML =
+      '<tr><td colspan="8" class="loading">' +
+      'Loading students...</td></tr>';
+
+    const data =
+      await apiFetch('/teacher/all-students');
+
+    if (!data.students || data.students.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="8" class="empty-state">' +
+        'No students found. Add students first.' +
+        '</td></tr>';
+      document.getElementById('total-students')
+        .textContent = '0';
+      return;
+    }
+
+    allStudents = data.students;
+    populateDropdowns(allStudents);
+
+    tbody.innerHTML = '';
+    let highRisk = 0;
+    let totalAtt = 0;
+    let totalMarks = 0;
+
+    for (const s of allStudents) {
+      let avgMarks = 0;
+      let riskLevel = 'LOW';
+      let attPct = parseFloat(s.attendance_pct) || 0;
+
+      try {
+        const report = await apiFetch(`/report/${s.id}`);
+        avgMarks = report.average_marks_percentage || 0;
+      } catch(e) {}
+
+      try {
+        const risk = await apiFetch(
+          `/predict-risk/${s.id}`, 'POST'
+        );
+        riskLevel = risk.risk_level || 'LOW';
+        if (riskLevel === 'HIGH') highRisk++;
+      } catch(e) {}
+
+      totalAtt += attPct;
+      totalMarks += avgMarks;
+
+      const badges = {
+        HIGH:
+          '<span class="badge bg-danger">🔴 HIGH</span>',
+        MEDIUM:
+          '<span class="badge bg-warning">🟡 MEDIUM</span>',
+        LOW:
+          '<span class="badge bg-success">🟢 LOW</span>'
+      };
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${s.id}</td>
+        <td><strong>${s.name}</strong></td>
+        <td>${s.class_section}</td>
+        <td>${s.roll_number || '—'}</td>
+        <td>
+          <span class="badge ${attPct >= 75 ?
+            'bg-success' : 'bg-danger'}">
+            ${attPct}%
+          </span>
+        </td>
+        <td>
+          <span class="badge ${avgMarks >= 40 ?
+            'bg-success' : 'bg-danger'}">
+            ${avgMarks}%
+          </span>
+        </td>
+        <td>${badges[riskLevel]}</td>
+        <td>
+          <button class="btn-notify"
+                  onclick="notify(${s.id})">
+            📧 Notify
+          </button>
+          <button class="btn-view"
+                  onclick="viewStudent(${s.id})">
+            👁️ View
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    const count = allStudents.length;
+    document.getElementById('total-students')
+      .textContent = count;
+    document.getElementById('high-risk')
+      .textContent = highRisk;
+    document.getElementById('avg-att').textContent =
+      count > 0 ?
+        Math.round(totalAtt/count) + '%' : '0%';
+    document.getElementById('avg-marks').textContent =
+      count > 0 ?
+        Math.round(totalMarks/count) + '%' : '0%';
+  }
+
+  async function viewStudent(studentId) {
+    const [report, marksData] = await Promise.all([
+      apiFetch(`/report/${studentId}`),
+      apiFetch(`/marks/${studentId}`)
+    ]);
+
+    const student = report.student || {};
+    document.getElementById('modal-details').innerHTML =`
+      <div class="detail-item">
+        <div class="d-label">Name</div>
+        <div class="d-value">${student.name || '—'}</div>
+      </div>
+      <div class="detail-item">
+        <div class="d-label">Class</div>
+        <div class="d-value">
+          ${student.class_section || '—'}
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="d-label">Attendance</div>
+        <div class="d-value">
+          ${report.attendance_percentage || 0}%
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="d-label">Avg Marks</div>
+        <div class="d-value">
+          ${report.average_marks_percentage || 0}%
+        </div>
+      </div>
+    `;
+
+    const marksTbody =
+      document.getElementById('modal-marks');
+    marksTbody.innerHTML = '';
+    if (marksData.marks && marksData.marks.length > 0) {
+      marksData.marks.forEach(m => {
+        const pct = Math.round(
+          m.marks_obtained / m.max_marks * 100
+        );
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${m.subject_name}</td>
+          <td>${m.exam_name}</td>
+          <td>${m.marks_obtained}/${m.max_marks}</td>
+          <td>${pct}%</td>
+        `;
+        marksTbody.appendChild(tr);
+      });
+    } else {
+      marksTbody.innerHTML =
+        '<tr><td colspan="4" class="empty-state">' +
+        'No marks yet</td></tr>';
+    }
+
+    document.getElementById('student-modal')
+      .classList.add('active');
+  }
+
+  function closeStudentModal() {
+    document.getElementById('student-modal')
+      .classList.remove('active');
+  }
+
+  async function loadSubjects() {
+    const studentId =
+      document.getElementById('m-sid').value;
+    const subjectSelect =
+      document.getElementById('m-subject');
+
+    if (!studentId) {
+      subjectSelect.innerHTML =
+        '<option value="">' +
+        '-- Select Student First --</option>';
+      return;
+    }
+
+    subjectSelect.innerHTML =
+      '<option value="">Loading subjects...</option>';
+
+    const data = await apiFetch(
+      `/subjects/student/${studentId}`
+    );
+
+    subjectSelect.innerHTML =
+      '<option value="">-- Select Subject --</option>';
+
+    if (data.subjects && data.subjects.length > 0) {
+      data.subjects.forEach(s => {
+        subjectSelect.innerHTML +=
+          `<option value="${s.id}">
+            ${s.subject_name}
+           </option>`;
+      });
+    } else {
+      subjectSelect.innerHTML =
+        '<option value="">' +
+        'No subjects for this class</option>';
+    }
+  }
+
+  async function addStudent() {
+    const name =
+      document.getElementById('new-name').value.trim();
+    const classSection =
+      document.getElementById('new-class').value.trim();
+    const rollNumber =
+      document.getElementById('new-roll').value.trim();
+    const username =
+      document.getElementById('new-username').value.trim();
+    const password =
+      document.getElementById('new-password').value;
+    const parentName =
+      document.getElementById('new-parent-name')
+        .value.trim();
+    const parentEmail =
+      document.getElementById('new-parent-email')
+        .value.trim();
+    const parentPhone =
+      document.getElementById('new-parent-phone')
+        .value.trim();
+
+    const okMsg = document.getElementById('add-ok');
+    const errMsg = document.getElementById('add-err');
+    okMsg.style.display = 'none';
+    errMsg.style.display = 'none';
+
+    if (!name || !classSection ||
+        !username || !password) {
+      errMsg.textContent =
+        '❌ Please fill all required fields (*)';
+      errMsg.style.display = 'block';
+      return;
+    }
+
+    if (password.length < 6) {
+      errMsg.textContent =
+        '❌ Password must be at least 6 characters';
+      errMsg.style.display = 'block';
+      return;
+    }
+
+    const res = await apiFetch(
+      '/teacher/add-student', 'POST', {
+        name,
+        class_section: classSection,
+        roll_number: rollNumber,
+        username,
+        password,
+        parent_name: parentName,
+        parent_email: parentEmail,
+        parent_phone: parentPhone
+      }
+    );
+
+    if (res.message) {
+      okMsg.style.display = 'block';
+      document.querySelectorAll('#tab-addstudent input')
+        .forEach(i => i.value = '');
+      loadStudents();
+    } else {
+      errMsg.textContent =
+        '❌ ' + (res.error || 'Failed to add student');
+      errMsg.style.display = 'block';
+    }
+  }
+
+  async function notify(id) {
+    await apiFetch('/notify', 'POST', { student_id: id });
+    alert(`✅ Notification sent to parent of Student ${id}`);
+  }
+
+  async function submitAttendance() {
+    const studentId =
+      document.getElementById('att-sid').value;
+    const date =
+      document.getElementById('att-date').value;
+    const status =
+      document.getElementById('att-status').value;
+    const okMsg = document.getElementById('att-ok');
+    const errMsg = document.getElementById('att-err');
+    okMsg.style.display = 'none';
+    errMsg.style.display = 'none';
+
+    if (!studentId || !date) {
+      errMsg.textContent =
+        '❌ Please select student and date';
+      errMsg.style.display = 'block';
+      return;
+    }
+
+    const res = await apiFetch('/attendance', 'POST', {
+      records: [{
+        student_id: parseInt(studentId),
+        date: date,
+        status: status
+      }]
+    });
+
+    if (res.message) {
+      okMsg.style.display = 'block';
+      setTimeout(
+        () => okMsg.style.display = 'none', 3000
+      );
+    } else {
+      errMsg.textContent =
+        '❌ ' + (res.error || 'Failed to save');
+      errMsg.style.display = 'block';
+    }
+  }
+
+  async function viewAttendance() {
+    const studentId =
+      document.getElementById('view-att-sid').value;
+    if (!studentId) {
+      alert('Please select a student');
+      return;
+    }
+
+    const data = await apiFetch(`/attendance/${studentId}`);
+    const tbody =
+      document.getElementById('att-history-tbody');
+    tbody.innerHTML = '';
+
+    if (data.records && data.records.length > 0) {
+      data.records.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.date}</td>
+          <td>
+            <span class="badge ${r.status === 'Present'
+              ? 'bg-success' : 'bg-danger'}">
+              ${r.status}
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } else {
+      tbody.innerHTML =
+        '<tr><td colspan="2" class="empty-state">' +
+        'No attendance records found</td></tr>';
+    }
+  }
+
+  // ── MARKS FUNCTIONS ──────────────────────────────
+
+  async function submitMarks() {
+    const studentId =
+      document.getElementById('m-sid').value;
+    const subjectId =
+      document.getElementById('m-subject').value;
+    const exam =
+      document.getElementById('m-exam').value.trim();
+    const obtained =
+      document.getElementById('m-obtained').value;
+    const max =
+      document.getElementById('m-max').value;
+    const okMsg = document.getElementById('marks-ok');
+    const errMsg = document.getElementById('marks-err');
+    okMsg.style.display = 'none';
+    errMsg.style.display = 'none';
+
+    if (!studentId || !subjectId ||
+        !exam || !obtained || !max) {
+      errMsg.textContent =
+        '❌ Please fill all required fields';
+      errMsg.style.display = 'block';
+      return;
+    }
+
+    if (parseInt(obtained) > parseInt(max)) {
+      errMsg.textContent =
+        '❌ Marks obtained cannot exceed maximum marks';
+      errMsg.style.display = 'block';
+      return;
+    }
+
+    pendingMarksData = {
+      student_id: parseInt(studentId),
+      subject_id: parseInt(subjectId),
+      exam_name: exam,
+      marks_obtained: parseInt(obtained),
+      max_marks: parseInt(max)
+    };
+
+    const res = await apiFetch(
+      '/marks', 'POST', pendingMarksData
+    );
+
+    if (res.message) {
+      okMsg.style.display = 'block';
+      setTimeout(
+        () => okMsg.style.display = 'none', 3000
+      );
+      document.getElementById('m-exam').value = '';
+      document.getElementById('m-obtained').value = '';
+      document.getElementById('m-max').value = '';
+      pendingMarksData = null;
+
+    } else if (res.duplicate) {
+      duplicateMarkId = res.existing_id;
+      document.getElementById('duplicate-msg')
+        .textContent = res.message;
+      document.getElementById('update-obtained').value =
+        res.existing_marks;
+      document.getElementById('update-max').value =
+        res.existing_max;
+      document.getElementById('update-form')
+        .style.display = 'none';
+      document.getElementById('duplicate-modal')
+        .classList.add('active');
+
+    } else {
+      errMsg.textContent =
+        '❌ ' + (res.error || 'Failed to save marks');
+      errMsg.style.display = 'block';
+    }
+  }
+
+  function closeDuplicateModal() {
+    document.getElementById('duplicate-modal')
+      .classList.remove('active');
+    document.getElementById('update-form')
+      .style.display = 'none';
+    duplicateMarkId = null;
+    pendingMarksData = null;
+  }
+
+  function showUpdateForm() {
+    document.getElementById('update-form')
+      .style.display = 'block';
+  }
+
+  async function confirmUpdate() {
+    const newObtained =
+      document.getElementById('update-obtained').value;
+    const newMax =
+      document.getElementById('update-max').value;
+    const errMsg =
+      document.getElementById('update-err');
+    errMsg.style.display = 'none';
+
+    if (!newObtained || !newMax) {
+      errMsg.textContent =
+        '❌ Please enter new marks values';
+      errMsg.style.display = 'block';
+      return;
+    }
+
+    if (parseInt(newObtained) > parseInt(newMax)) {
+      errMsg.textContent =
+        '❌ Marks cannot exceed maximum marks';
+      errMsg.style.display = 'block';
+      return;
+    }
+
+    const res = await apiFetch(
+      `/marks/${duplicateMarkId}`, 'PUT', {
+        marks_obtained: parseInt(newObtained),
+        max_marks: parseInt(newMax)
+      }
+    );
+
+    if (res.message) {
+      closeDuplicateModal();
+      const okMsg =
+        document.getElementById('marks-ok');
+      okMsg.textContent = '✅ Marks updated successfully!';
+      okMsg.style.display = 'block';
+      setTimeout(
+        () => okMsg.style.display = 'none', 3000
+      );
+      document.getElementById('m-exam').value = '';
+      document.getElementById('m-obtained').value = '';
+      document.getElementById('m-max').value = '';
+    } else {
+      errMsg.textContent =
+        '❌ Failed: ' + (res.error || 'Unknown error');
+      errMsg.style.display = 'block';
+    }
+  }
+
+  async function deleteExistingMarks() {
+    if (!confirm(
+      'Are you sure you want to delete existing marks?'
+    )) return;
+
+    const res = await apiFetch(
+      `/marks/${duplicateMarkId}`, 'DELETE'
+    );
+
+    if (res.message) {
+      closeDuplicateModal();
+      const saveRes = await apiFetch(
+        '/marks', 'POST', pendingMarksData
+      );
+      const okMsg =
+        document.getElementById('marks-ok');
+      if (saveRes.message) {
+        okMsg.textContent =
+          '✅ Old marks deleted and new marks saved!';
+        okMsg.style.display = 'block';
+        setTimeout(
+          () => okMsg.style.display = 'none', 3000
+        );
+        document.getElementById('m-exam').value = '';
+        document.getElementById('m-obtained').value = '';
+        document.getElementById('m-max').value = '';
+      }
+    } else {
+      alert('❌ Failed to delete: ' +
+        (res.error || 'Unknown error'));
+    }
+  }
+
+  async function viewMarks() {
+    const studentId =
+      document.getElementById('view-marks-sid').value;
+    if (!studentId) {
+      alert('Please select a student');
+      return;
+    }
+
+    const data = await apiFetch(`/marks/${studentId}`);
+    const tbody =
+      document.getElementById('marks-view-tbody');
+    tbody.innerHTML = '';
+
+    if (data.marks && data.marks.length > 0) {
+      data.marks.forEach(m => {
+        const pct = Math.round(
+          m.marks_obtained / m.max_marks * 100
+        );
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${m.subject_name}</td>
+          <td>${m.exam_name}</td>
+          <td>${m.marks_obtained}/${m.max_marks}</td>
+          <td>
+            <span class="badge ${pct >= 40 ?
+              'bg-success' : 'bg-danger'}">
+              ${pct}%
+            </span>
+          </td>
+          <td>
+            <button class="btn-edit"
+              onclick="editMark(
+                ${m.id},
+                ${m.marks_obtained},
+                ${m.max_marks},
+                '${studentId}'
+              )">
+              ✏️ Edit
+            </button>
+            <button class="btn-notify"
+              onclick="deleteMark(
+                ${m.id},
+                '${studentId}'
+              )">
+              🗑️ Delete
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } else {
+      tbody.innerHTML =
+        '<tr><td colspan="5" class="empty-state">' +
+        'No marks found</td></tr>';
+    }
+  }
+
+  async function editMark(markId, currentObtained,
+    currentMax, studentId) {
+    const newObtained = prompt(
+      `Enter new marks obtained ` +
+      `(current: ${currentObtained}):`,
+      currentObtained
+    );
+    if (!newObtained) return;
+
+    const newMax = prompt(
+      `Enter new maximum marks (current: ${currentMax}):`,
+      currentMax
+    );
+    if (!newMax) return;
+
+    if (parseInt(newObtained) > parseInt(newMax)) {
+      alert(
+        '❌ Marks obtained cannot exceed maximum marks!'
+      );
+      return;
+    }
+
+    const res = await apiFetch(
+      `/marks/${markId}`, 'PUT', {
+        marks_obtained: parseInt(newObtained),
+        max_marks: parseInt(newMax)
+      }
+    );
+
+    if (res.message) {
+      alert('✅ Marks updated successfully!');
+      viewMarks();
+    } else {
+      alert('❌ Failed to update: ' +
+        (res.error || 'Unknown error'));
+    }
+  }
+
+  async function deleteMark(markId, studentId) {
+    if (!confirm(
+      'Are you sure you want to delete these marks?'
+    )) return;
+
+    const res = await apiFetch(
+      `/marks/${markId}`, 'DELETE'
+    );
+
+    if (res.message) {
+      alert('✅ Marks deleted successfully!');
+      viewMarks();
+    } else {
+      alert('❌ Failed to delete: ' +
+        (res.error || 'Unknown error'));
+    }
+  }
+
+  // Close modals on outside click
+  document.querySelectorAll('.modal-overlay')
+    .forEach(overlay => {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('active');
+        }
+      });
+    });
+
+  // Initialize
+  loadStudents();
+</script>
+</body>
+</html>

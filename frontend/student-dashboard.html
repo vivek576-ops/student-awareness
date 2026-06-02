@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',sans-serif; background:#f0f2f5; }
+    .navbar {
+      background:linear-gradient(135deg,#004085,#0f3460);
+      color:white; padding:16px 32px;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .navbar h2 { font-size:20px; }
+    .btn-logout {
+      background:#e74c3c; color:white; border:none;
+      padding:8px 20px; border-radius:6px; cursor:pointer;
+    }
+    .container { padding:24px 32px; }
+    .stats-grid {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:16px; margin-bottom:24px;
+    }
+    .stat-card {
+      background:white; border-radius:12px; padding:24px;
+      text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    }
+    .stat-card .number {
+      font-size:36px; font-weight:700; color:#0f3460;
+    }
+    .stat-card .label { font-size:13px; color:#888; margin-top:6px; }
+    .grid-2 {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:20px; margin-bottom:24px;
+    }
+    .section-card {
+      background:white; border-radius:12px;
+      padding:24px; margin-bottom:24px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    }
+    .section-card h3 {
+      font-size:17px; color:#1a1a2e; margin-bottom:16px;
+      border-bottom:2px solid #f0f2f5; padding-bottom:10px;
+    }
+    table { width:100%; border-collapse:collapse; font-size:14px; }
+    th {
+      background:#0f3460; color:white;
+      padding:10px 14px; text-align:left;
+    }
+    td { padding:10px 14px; border-bottom:1px solid #f0f2f5; }
+    .badge {
+      padding:4px 12px; border-radius:20px;
+      font-size:12px; font-weight:600;
+    }
+    .bg-danger  { background:#ffe0e0; color:#c0392b; }
+    .bg-warning { background:#fff3cd; color:#856404; }
+    .bg-success { background:#d4edda; color:#155724; }
+    .progress-bg {
+      background:#e0e0e0; border-radius:8px;
+      height:10px; margin-top:8px;
+    }
+    .progress-fill {
+      height:10px; border-radius:8px;
+      background:#0f3460; transition:width 1s ease;
+    }
+    .wellness-grid {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:16px;
+    }
+    .wellness-card {
+      border:2px solid #e0e0e0; border-radius:12px;
+      padding:20px; text-align:center; cursor:pointer;
+      transition:all 0.3s;
+    }
+    .wellness-card:hover {
+      border-color:#0f3460; background:#f0f4ff;
+      transform:translateY(-2px);
+    }
+    .wellness-card .icon { font-size:30px; margin-bottom:8px; }
+    .wellness-card h4 { font-size:14px; color:#1a1a2e; }
+    .wellness-card p { font-size:12px; color:#888; margin-top:4px; }
+
+    /* Modal Styles */
+    .modal-overlay {
+      display:none; position:fixed; top:0; left:0;
+      width:100%; height:100%;
+      background:rgba(0,0,0,0.5);
+      z-index:1000;
+      align-items:center; justify-content:center;
+    }
+    .modal-overlay.active { display:flex; }
+    .modal {
+      background:white; border-radius:16px;
+      padding:32px; max-width:500px; width:90%;
+      position:relative;
+    }
+    .modal h3 {
+      font-size:20px; color:#1a1a2e;
+      margin-bottom:16px;
+    }
+    .modal p {
+      font-size:14px; color:#555;
+      line-height:1.8; margin-bottom:12px;
+    }
+    .modal .close-btn {
+      position:absolute; top:16px; right:16px;
+      background:#f0f2f5; border:none;
+      width:32px; height:32px; border-radius:50%;
+      cursor:pointer; font-size:16px;
+    }
+    .modal ul {
+      padding-left:20px; margin-bottom:12px;
+    }
+    .modal ul li {
+      font-size:14px; color:#555;
+      line-height:2;
+    }
+    .tip-box {
+      background:#f0f4ff; border-left:4px solid #0f3460;
+      padding:12px 16px; border-radius:8px;
+      margin-top:12px;
+    }
+    .tip-box p { color:#0f3460; margin:0; font-weight:600; }
+  </style>
+</head>
+<body>
+
+<!-- Wellness Modals -->
+<div class="modal-overlay" id="modal-breathing">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('breathing')">✕</button>
+    <h3>🫁 4-7-8 Breathing Exercise</h3>
+    <p>This technique helps calm your nervous system and reduce stress instantly.</p>
+    <ul>
+      <li>👃 <strong>Inhale</strong> through nose for <strong>4 seconds</strong></li>
+      <li>🫁 <strong>Hold</strong> your breath for <strong>7 seconds</strong></li>
+      <li>💨 <strong>Exhale</strong> through mouth for <strong>8 seconds</strong></li>
+      <li>🔄 Repeat this cycle <strong>4 times</strong></li>
+    </ul>
+    <div class="tip-box">
+      <p>💡 Do this every morning and before exams to stay calm!</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-stress">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('stress')">✕</button>
+    <h3>💆 Stress Management Tips</h3>
+    <ul>
+      <li>📚 Break study sessions into 25-minute blocks</li>
+      <li>🚶 Take a 10-minute walk between study sessions</li>
+      <li>💧 Drink plenty of water throughout the day</li>
+      <li>😴 Get at least 7-8 hours of sleep every night</li>
+      <li>📵 Avoid social media 1 hour before sleeping</li>
+      <li>✍️ Write down worries to clear your mind</li>
+      <li>🎵 Listen to calming music while studying</li>
+    </ul>
+    <div class="tip-box">
+      <p>💡 Small consistent habits beat last-minute cramming!</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-counselor">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('counselor')">✕</button>
+    <h3>🤝 Talk to a Counselor</h3>
+    <p>You are not alone. Our school counselors are here to help you confidentially.</p>
+    <ul>
+      <li>🏫 <strong>School Counselor:</strong> Room 12, Block B</li>
+      <li>⏰ <strong>Available:</strong> Monday to Friday, 9AM - 4PM</li>
+      <li>📧 <strong>Email:</strong> counselor@school.com</li>
+      <li>📞 <strong>Phone:</strong> 9800012345</li>
+    </ul>
+    <div class="tip-box">
+      <p>💡 Everything you share is completely confidential!</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-selfcare">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('selfcare')">✕</button>
+    <h3>🌿 Self-Care Daily Guide</h3>
+    <ul>
+      <li>☀️ <strong>Morning:</strong> Wake up same time daily</li>
+      <li>🧘 <strong>Morning:</strong> 5 mins meditation or stretching</li>
+      <li>🍎 <strong>Breakfast:</strong> Never skip your first meal</li>
+      <li>📖 <strong>Study:</strong> Use Pomodoro technique</li>
+      <li>🌳 <strong>Evening:</strong> Spend 20 mins outdoors</li>
+      <li>📵 <strong>Night:</strong> No screens 1 hour before bed</li>
+      <li>😴 <strong>Sleep:</strong> 7-8 hours minimum</li>
+    </ul>
+    <div class="tip-box">
+      <p>💡 Your health is your biggest asset. Protect it!</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-motivation">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('motivation')">✕</button>
+    <h3>⭐ Motivation Corner</h3>
+    <p style="font-size:18px;font-style:italic;color:#0f3460;text-align:center;margin:16px 0">
+      "Success is not final, failure is not fatal: It is the courage to continue that counts."
+    </p>
+    <p style="text-align:center;color:#888">— Winston Churchill</p>
+    <ul style="margin-top:16px">
+      <li>🌟 Every expert was once a beginner</li>
+      <li>💪 Your hard work today is your success tomorrow</li>
+      <li>🎯 Focus on progress, not perfection</li>
+      <li>🚀 Believe in yourself — you are capable!</li>
+    </ul>
+    <div class="tip-box">
+      <p>💡 Read one motivational quote every morning!</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-helpline">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('helpline')">✕</button>
+    <h3>📞 Emergency Helpline Numbers</h3>
+    <ul>
+      <li>🆘 <strong>iCall (India):</strong> 9152987821</li>
+      <li>💙 <strong>Vandrevala Foundation:</strong> 1860-2662-345</li>
+      <li>🏥 <strong>NIMHANS:</strong> 080-46110007</li>
+      <li>👨‍👩‍👧 <strong>Childline:</strong> 1098</li>
+      <li>🚨 <strong>Emergency:</strong> 112</li>
+      <li>📧 <strong>School:</strong> help@school.com</li>
+    </ul>
+    <div class="tip-box">
+      <p>💡 It is okay to ask for help. You are brave!</p>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar">
+  <h2>👨‍🎓 Student Dashboard — EduTrack</h2>
+  <button class="btn-logout" onclick="logout()">Logout</button>
+</nav>
+
+<div class="container">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="number" id="att-pct">—</div>
+      <div class="label">Attendance %</div>
+      <div class="progress-bg">
+        <div class="progress-fill" id="att-bar" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="number" id="avg-marks">—</div>
+      <div class="label">Average Marks %</div>
+      <div class="progress-bg">
+        <div class="progress-fill" id="marks-bar"
+             style="width:0%;background:#27ae60"></div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="number" id="risk-display">—</div>
+      <div class="label">My Risk Level</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="section-card">
+      <h3>📈 Performance Chart</h3>
+      <canvas id="marksChart" height="200"></canvas>
+    </div>
+    <div class="section-card">
+      <h3>📝 Subject-wise Marks</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Subject</th><th>Exam</th>
+            <th>Score</th><th>%</th>
+          </tr>
+        </thead>
+        <tbody id="marks-tbody">
+          <tr>
+            <td colspan="4"
+                style="text-align:center;color:#999">
+              Loading...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <h3>📋 My Attendance</h3>
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Status</th></tr>
+      </thead>
+      <tbody id="att-tbody">
+        <tr>
+          <td colspan="2"
+              style="text-align:center;color:#999">
+            Loading...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-card">
+    <h3>🧠 Well-being & Mental Health</h3>
+    <div class="wellness-grid">
+      <div class="wellness-card"
+           onclick="openModal('breathing', 'breathing')">
+        <div class="icon">🫁</div>
+        <h4>Breathing Exercise</h4>
+        <p>4-7-8 breathing technique</p>
+      </div>
+      <div class="wellness-card"
+           onclick="openModal('stress', 'stress_tips')">
+        <div class="icon">💆</div>
+        <h4>Stress Tips</h4>
+        <p>Handle academic pressure</p>
+      </div>
+      <div class="wellness-card"
+           onclick="openModal('counselor', 'counselor')">
+        <div class="icon">🤝</div>
+        <h4>Talk to Counselor</h4>
+        <p>Confidential support</p>
+      </div>
+      <div class="wellness-card"
+           onclick="openModal('selfcare', 'self_care')">
+        <div class="icon">🌿</div>
+        <h4>Self-Care Guide</h4>
+        <p>Daily well-being habits</p>
+      </div>
+      <div class="wellness-card"
+           onclick="openModal('motivation', 'motivation')">
+        <div class="icon">⭐</div>
+        <h4>Motivation Corner</h4>
+        <p>Inspiring quotes</p>
+      </div>
+      <div class="wellness-card"
+           onclick="openModal('helpline', 'helpline')">
+        <div class="icon">📞</div>
+        <h4>Helpline</h4>
+        <p>Emergency contacts</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const TOKEN = localStorage.getItem('jwt_token');
+  const BASE = 'http://localhost:5000/api/v1';
+  const ROLE = localStorage.getItem('user_role');
+  // Route protection
+  if (!TOKEN || ROLE !== 'student') {
+  window.location.href = 'index.html';
+  }
+
+  // Get correct student_id from localStorage
+  let STUDENT_ID = localStorage.getItem('student_id');
+  let USER_NAME = localStorage.getItem('user_name') || 'Student';
+
+  // Show student name in navbar
+  document.querySelector('.navbar h2').textContent =
+    `👨‍🎓 Welcome, ${USER_NAME} — EduTrack`;
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'index.html';
+  }
+
+  function openModal(modalName, resourceType) {
+    document.getElementById('modal-' + modalName)
+      .classList.add('active');
+    logWellness(resourceType);
+  }
+
+  function closeModal(modalName) {
+    document.getElementById('modal-' + modalName)
+      .classList.remove('active');
+  }
+
+  document.querySelectorAll('.modal-overlay')
+    .forEach(overlay => {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this)
+          this.classList.remove('active');
+      });
+    });
+
+  async function apiFetch(url, method='GET', body=null) {
+    const opts = {
+      method,
+      headers: {
+        'Authorization': `Bearer ${TOKEN}`,
+        'Content-Type': 'application/json'
+      }
+    };
+    if (body) opts.body = JSON.stringify(body);
+    try {
+      const res = await fetch(BASE + url, opts);
+      return res.json();
+    } catch(e) {
+      console.error('API Error:', e);
+      return { error: 'Connection failed' };
+    }
+  }
+
+  async function getStudentId() {
+    // If student_id already in localStorage use it
+    if (STUDENT_ID) return STUDENT_ID;
+
+    // Otherwise fetch from /auth/me
+    try {
+      const meData = await apiFetch('/auth/me');
+      if (meData.student_id) {
+        STUDENT_ID = meData.student_id;
+        localStorage.setItem('student_id', STUDENT_ID);
+        return STUDENT_ID;
+      }
+    } catch(e) {
+      console.error('Error getting student ID:', e);
+    }
+    return null;
+  }
+
+  async function loadDashboard() {
+    const id = await getStudentId();
+
+    if (!id) {
+      document.getElementById('att-pct').textContent = 'N/A';
+      document.getElementById('avg-marks').textContent = 'N/A';
+      document.getElementById('risk-display').innerHTML =
+        '<span class="badge bg-warning">⚠️ No Data</span>';
+      document.getElementById('marks-tbody').innerHTML =
+        '<tr><td colspan="4" style="text-align:center;' +
+        'color:#999">No student record found</td></tr>';
+      return;
+    }
+
+    try {
+      // Load all data together
+      const [report, marksData, attData] =
+        await Promise.all([
+          apiFetch(`/report/${id}`),
+          apiFetch(`/marks/${id}`),
+          apiFetch(`/attendance/${id}`)
+        ]);
+
+      // Update stats
+      document.getElementById('att-pct').textContent =
+        (report.attendance_percentage || 0) + '%';
+      document.getElementById('avg-marks').textContent =
+        (report.average_marks_percentage || 0) + '%';
+      document.getElementById('att-bar').style.width =
+        (report.attendance_percentage || 0) + '%';
+      document.getElementById('marks-bar').style.width =
+        (report.average_marks_percentage || 0) + '%';
+
+      // Risk badge
+      try {
+        const risk = await apiFetch(
+          `/predict-risk/${id}`, 'POST'
+        );
+        const badges = {
+          HIGH:
+            '<span class="badge bg-danger">🔴 HIGH RISK</span>',
+          MEDIUM:
+            '<span class="badge bg-warning">🟡 MEDIUM RISK</span>',
+          LOW:
+            '<span class="badge bg-success">🟢 LOW RISK</span>'
+        };
+        document.getElementById('risk-display').innerHTML =
+          badges[risk.risk_level] || badges['LOW'];
+      } catch(e) {
+        document.getElementById('risk-display').innerHTML =
+          '<span class="badge bg-success">🟢 LOW RISK</span>';
+      }
+
+      // Marks table and chart
+      const tbody =
+        document.getElementById('marks-tbody');
+      tbody.innerHTML = '';
+      const labels = [];
+      const scores = [];
+
+      if (marksData.marks && marksData.marks.length > 0) {
+        marksData.marks.forEach(m => {
+          const pct = Math.round(
+            m.marks_obtained / m.max_marks * 100
+          );
+          labels.push(m.subject_name);
+          scores.push(pct);
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${m.subject_name}</td>
+            <td>${m.exam_name}</td>
+            <td>${m.marks_obtained}/${m.max_marks}</td>
+            <td>
+              <span class="badge ${pct >= 40 ?
+                'bg-success' : 'bg-danger'}">
+                ${pct}%
+              </span>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        // Render chart
+        new Chart(
+          document.getElementById('marksChart'), {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Marks %',
+              data: scores,
+              backgroundColor: scores.map(s =>
+                s >= 40 ? '#0f3460' : '#e74c3c'
+              ),
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: { beginAtZero: true, max: 100 }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+      } else {
+        tbody.innerHTML =
+          '<tr><td colspan="4" style="text-align:' +
+          'center;color:#999;padding:20px">' +
+          '📝 No marks added yet</td></tr>';
+      }
+
+      // Attendance table
+      const attBody =
+        document.getElementById('att-tbody');
+      attBody.innerHTML = '';
+
+      if (attData.records && attData.records.length > 0) {
+        // Show attendance summary
+        attBody.innerHTML +=
+          `<tr style="background:#f8f9fa">
+            <td colspan="2" style="padding:10px 14px;
+              font-size:13px;color:#555">
+              📊 Total: ${attData.total} days |
+              ✅ Present: ${attData.present} |
+              ❌ Absent: ${attData.absent} |
+              📈 Percentage: ${attData.percentage}%
+            </td>
+          </tr>`;
+
+        attData.records.slice(0, 15).forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${r.date}</td>
+            <td>
+              <span class="badge ${r.status === 'Present'
+                ? 'bg-success' : 'bg-danger'}">
+                ${r.status === 'Present' ? '✅' : '❌'}
+                ${r.status}
+              </span>
+            </td>
+          `;
+          attBody.appendChild(tr);
+        });
+      } else {
+        attBody.innerHTML =
+          '<tr><td colspan="2" style="text-align:' +
+          'center;color:#999;padding:20px">' +
+          '📋 No attendance records yet</td></tr>';
+      }
+
+    } catch(err) {
+      console.error('Dashboard load error:', err);
+    }
+  }
+
+  async function logWellness(type) {
+    try {
+      const id = await getStudentId();
+      if (id) {
+        await apiFetch('/wellness/log', 'POST', {
+          student_id: parseInt(id),
+          resource_type: type
+        });
+      }
+    } catch(e) {
+      console.log('Wellness log:', e);
+    }
+  }
+
+  // Load dashboard on page open
+  loadDashboard();
+</script>
+</body>
+</html>
