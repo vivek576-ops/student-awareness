@@ -354,7 +354,7 @@
 
 <script>
   const TOKEN = localStorage.getItem('jwt_token');
-  const BASE = 'http://localhost:5000/api/v1';
+  const BASE = 'https://student-awareness-backend.onrender.com/api/v1';
   const ROLE = localStorage.getItem('user_role');
   // Route protection
   if (!TOKEN || ROLE !== 'student') {
