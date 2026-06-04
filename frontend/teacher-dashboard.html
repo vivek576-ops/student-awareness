@@ -8,185 +8,270 @@
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'Segoe UI',sans-serif; background:#f0f2f5; }
+
     .navbar {
       background:linear-gradient(135deg,#155724,#1e8449);
-      color:white; padding:16px 32px;
-      display:flex; justify-content:space-between; align-items:center;
+      color:white; padding:16px 20px;
+      display:flex; justify-content:space-between;
+      align-items:center; flex-wrap:wrap; gap:10px;
     }
-    .navbar h2 { font-size:20px; }
+    .navbar h2 { font-size:18px; }
+    .navbar-btns { display:flex; gap:8px; }
+    .btn-settings {
+      background:rgba(255,255,255,0.2);
+      color:white; border:none;
+      padding:8px 14px; border-radius:6px;
+      cursor:pointer; font-size:13px;
+    }
     .btn-logout {
       background:#e74c3c; color:white; border:none;
-      padding:8px 20px; border-radius:6px; cursor:pointer;
+      padding:8px 16px; border-radius:6px;
+      cursor:pointer; font-size:13px;
     }
-    .container { padding:24px 32px; }
+
+    .container { padding:16px; }
+
     .stats-grid {
-      display:grid; grid-template-columns:repeat(4,1fr);
-      gap:16px; margin-bottom:24px;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px; margin-bottom:20px;
+    }
+    @media(max-width:768px) {
+      .stats-grid {
+        grid-template-columns:repeat(2,1fr);
+      }
+    }
+    @media(max-width:480px) {
+      .stats-grid {
+        grid-template-columns:1fr 1fr;
+      }
     }
     .stat-card {
-      background:white; border-radius:12px; padding:20px;
-      text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.08);
+      background:white; border-radius:12px;
+      padding:16px; text-align:center;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
     }
     .stat-card .number {
-      font-size:32px; font-weight:700; color:#155724;
+      font-size:28px; font-weight:700; color:#155724;
     }
     .stat-card .label {
-      font-size:13px; color:#888; margin-top:4px;
+      font-size:12px; color:#888; margin-top:4px;
     }
-    .tabs { display:flex; gap:8px; margin-bottom:24px; }
+
+    .tabs {
+      display:flex; gap:6px; margin-bottom:20px;
+      flex-wrap:wrap;
+    }
     .tab {
-      padding:10px 20px; border:2px solid #e0e0e0;
+      padding:10px 16px; border:2px solid #e0e0e0;
       border-radius:8px; cursor:pointer;
-      font-size:14px; background:white;
+      font-size:13px; background:white;
       font-weight:600; color:#666;
     }
     .tab.active {
-      background:#155724; color:white; border-color:#155724;
+      background:#155724; color:white;
+      border-color:#155724;
     }
     .tab-content { display:none; }
     .tab-content.active { display:block; }
+
     .section-card {
       background:white; border-radius:12px;
-      padding:24px; margin-bottom:24px;
+      padding:20px; margin-bottom:20px;
       box-shadow:0 2px 8px rgba(0,0,0,0.08);
     }
     .section-card h3 {
-      font-size:17px; color:#1a1a2e; margin-bottom:16px;
-      border-bottom:2px solid #f0f2f5; padding-bottom:10px;
+      font-size:16px; color:#1a1a2e;
+      margin-bottom:16px;
+      border-bottom:2px solid #f0f2f5;
+      padding-bottom:10px;
     }
-    table { width:100%; border-collapse:collapse; font-size:14px; }
+
+    /* Responsive Table */
+    .table-wrapper {
+      width:100%; overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+    }
+    table {
+      width:100%; border-collapse:collapse;
+      font-size:13px; min-width:600px;
+    }
     th {
       background:#155724; color:white;
-      padding:12px 16px; text-align:left;
+      padding:10px 12px; text-align:left;
+      white-space:nowrap;
     }
-    td { padding:12px 16px; border-bottom:1px solid #f0f2f5; }
+    td {
+      padding:10px 12px;
+      border-bottom:1px solid #f0f2f5;
+      vertical-align:middle;
+    }
     tr:hover td { background:#f8f9fa; }
+
     .badge {
-      padding:4px 12px; border-radius:20px;
-      font-size:12px; font-weight:600;
+      padding:4px 10px; border-radius:20px;
+      font-size:11px; font-weight:600;
+      white-space:nowrap;
     }
     .bg-danger  { background:#ffe0e0; color:#c0392b; }
     .bg-warning { background:#fff3cd; color:#856404; }
     .bg-success { background:#d4edda; color:#155724; }
-    .form-group { margin-bottom:16px; }
+
+    /* Action Buttons */
+    .action-btns {
+      display:flex; gap:4px; flex-wrap:wrap;
+    }
+    .btn-action {
+      padding:5px 10px; border:none;
+      border-radius:5px; cursor:pointer;
+      font-size:11px; font-weight:600;
+      white-space:nowrap;
+    }
+    .btn-notify { background:#e67e22; color:white; }
+    .btn-view   { background:#0f3460; color:white; }
+    .btn-edit   { background:#27ae60; color:white; }
+    .btn-delete { background:#e74c3c; color:white; }
+
+    /* Forms */
+    .form-group { margin-bottom:14px; }
     .form-group label {
-      display:block; font-size:12px; font-weight:700;
-      color:#555; margin-bottom:6px; text-transform:uppercase;
+      display:block; font-size:11px;
+      font-weight:700; color:#555;
+      margin-bottom:5px; text-transform:uppercase;
     }
-    .form-group input, .form-group select {
+    .form-group input,
+    .form-group select {
       width:100%; padding:10px 14px;
-      border:2px solid #e0e0e0; border-radius:8px;
-      font-size:14px; outline:none;
+      border:2px solid #e0e0e0;
+      border-radius:8px; font-size:14px;
+      outline:none;
     }
-    .form-group input:focus, .form-group select:focus {
+    .form-group input:focus,
+    .form-group select:focus {
       border-color:#155724;
     }
+    .form-group.password-wrap {
+      position:relative;
+    }
+    .form-group.password-wrap input {
+      padding-right:44px;
+    }
+    .toggle-pwd {
+      position:absolute; right:12px; top:34px;
+      background:none; border:none;
+      cursor:pointer; font-size:18px; color:#888;
+    }
+
     .form-grid-3 {
-      display:grid; grid-template-columns:repeat(3,1fr);
-      gap:16px;
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
     }
     .form-grid-2 {
-      display:grid; grid-template-columns:1fr 1fr;
-      gap:16px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
     }
+    @media(max-width:768px) {
+      .form-grid-3 {
+        grid-template-columns:1fr;
+      }
+      .form-grid-2 {
+        grid-template-columns:1fr;
+      }
+    }
+
     .btn-submit {
-      background:#155724; color:white; border:none;
-      padding:12px 28px; border-radius:8px;
-      cursor:pointer; font-size:14px; font-weight:600;
-      margin-top:8px;
+      background:#155724; color:white;
+      border:none; padding:12px 24px;
+      border-radius:8px; cursor:pointer;
+      font-size:14px; font-weight:600;
+      margin-top:8px; width:100%;
     }
     .btn-submit:hover { background:#0d3d18; }
-    .btn-notify {
-      background:#e74c3c; color:white; border:none;
-      padding:6px 12px; border-radius:6px;
-      cursor:pointer; font-size:12px;
-    }
-    .btn-edit {
-      background:#e67e22; color:white; border:none;
-      padding:6px 12px; border-radius:6px;
-      cursor:pointer; font-size:12px; margin-right:4px;
-    }
-    .btn-view {
-      background:#0f3460; color:white; border:none;
-      padding:6px 12px; border-radius:6px;
-      cursor:pointer; font-size:12px; margin-left:4px;
-    }
+
     .ok-msg {
       color:#27ae60; font-size:13px;
       margin-top:10px; display:none;
       padding:10px; background:#d4edda;
-      border-radius:8px;
+      border-radius:8px; text-align:center;
     }
     .err-msg {
       color:#c0392b; font-size:13px;
       margin-top:10px; display:none;
       padding:10px; background:#ffe0e0;
-      border-radius:8px;
+      border-radius:8px; text-align:center;
     }
+
     .section-divider {
-      font-size:15px; font-weight:700;
-      color:#155724; margin:20px 0 12px;
+      font-size:14px; font-weight:700;
+      color:#155724; margin:16px 0 10px;
       padding-bottom:6px;
       border-bottom:2px solid #d4edda;
     }
+
     .empty-state {
       text-align:center; color:#999;
-      padding:30px; font-size:14px;
+      padding:24px; font-size:14px;
     }
     .loading {
       text-align:center; color:#888;
       padding:20px; font-size:14px;
     }
+
+    /* Modals */
     .modal-overlay {
       display:none; position:fixed;
       top:0; left:0; width:100%; height:100%;
       background:rgba(0,0,0,0.5);
       z-index:1000; align-items:center;
-      justify-content:center;
+      justify-content:center; padding:16px;
     }
     .modal-overlay.active { display:flex; }
     .modal {
       background:white; border-radius:16px;
-      padding:32px; max-width:600px;
-      width:90%; position:relative;
-      max-height:80vh; overflow-y:auto;
+      padding:24px; width:100%; max-width:580px;
+      position:relative; max-height:90vh;
+      overflow-y:auto;
     }
     .modal h3 {
-      font-size:18px; color:#1a1a2e;
+      font-size:17px; color:#1a1a2e;
       margin-bottom:16px;
     }
     .modal-close {
-      position:absolute; top:16px; right:16px;
+      position:absolute; top:14px; right:14px;
       background:#f0f2f5; border:none;
-      width:32px; height:32px; border-radius:50%;
-      cursor:pointer; font-size:16px;
+      width:30px; height:30px; border-radius:50%;
+      cursor:pointer; font-size:15px;
     }
     .detail-grid {
       display:grid; grid-template-columns:1fr 1fr;
-      gap:12px; margin-bottom:16px;
+      gap:10px; margin-bottom:16px;
     }
     .detail-item {
-      background:#f8f9fa; border-radius:8px; padding:12px;
+      background:#f8f9fa; border-radius:8px;
+      padding:10px;
     }
     .detail-item .d-label {
-      font-size:11px; color:#888;
+      font-size:10px; color:#888;
       text-transform:uppercase; font-weight:700;
     }
     .detail-item .d-value {
-      font-size:15px; color:#1a1a2e;
-      font-weight:600; margin-top:4px;
+      font-size:14px; color:#1a1a2e;
+      font-weight:600; margin-top:3px;
     }
     .warning-box {
       background:#fff3cd; border:2px solid #ffc107;
-      border-radius:10px; padding:16px;
+      border-radius:10px; padding:14px;
       margin-bottom:16px;
     }
     .warning-box p {
-      color:#856404; font-size:14px; margin-bottom:8px;
+      color:#856404; font-size:13px;
+      margin-bottom:6px;
     }
-    .action-btns {
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-top:12px;
+    .action-btns-modal {
+      display:flex; gap:8px; flex-wrap:wrap;
+      margin-top:10px;
     }
   </style>
 </head>
@@ -199,19 +284,20 @@
             onclick="closeStudentModal()">✕</button>
     <h3>👨‍🎓 Student Details</h3>
     <div class="detail-grid" id="modal-details"></div>
-    <h4 style="margin-bottom:12px;color:#155724">
+    <h4 style="margin-bottom:10px;color:#155724">
       📝 Recent Marks
     </h4>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th><th>Email</th>
-          <th>Specialization</th>
-          <th>Status</th><th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="modal-marks"></tbody>
-    </table>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Subject</th><th>Exam</th>
+            <th>Score</th><th>%</th>
+          </tr>
+        </thead>
+        <tbody id="modal-marks"></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -224,31 +310,32 @@
     <div class="warning-box">
       <p id="duplicate-msg"></p>
     </div>
-    <p style="color:#555;margin-bottom:16px;font-size:14px">
+    <p style="color:#555;margin-bottom:14px;font-size:13px">
       What would you like to do?
     </p>
-    <div class="action-btns">
+    <div class="action-btns-modal">
       <button class="btn-submit"
-              style="background:#e67e22"
+              style="background:#e67e22;width:auto;
+                     padding:10px 16px"
               onclick="showUpdateForm()">
-        ✏️ Update Existing Marks
+        ✏️ Update Marks
       </button>
       <button class="btn-submit"
-              style="background:#e74c3c"
+              style="background:#e74c3c;width:auto;
+                     padding:10px 16px"
               onclick="deleteExistingMarks()">
         🗑️ Delete & Re-enter
       </button>
       <button class="btn-submit"
-              style="background:#888"
+              style="background:#888;width:auto;
+                     padding:10px 16px"
               onclick="closeDuplicateModal()">
         ❌ Cancel
       </button>
     </div>
     <div id="update-form"
-         style="display:none;margin-top:20px">
-      <div class="section-divider">
-        Enter New Marks
-      </div>
+         style="display:none;margin-top:16px">
+      <div class="section-divider">Enter New Marks</div>
       <div class="form-grid-2">
         <div class="form-group">
           <label>New Marks Obtained</label>
@@ -272,12 +359,10 @@
 
 <nav class="navbar">
   <h2>👨‍🏫 Teacher Dashboard — EduTrack</h2>
-  <div style="display:flex;gap:10px">
-    <button onclick="window.location.href='profile-settings.html'"
-            style="background:rgba(255,255,255,0.2);
-                   color:white; border:none;
-                   padding:8px 16px; border-radius:6px;
-                   cursor:pointer; font-size:14px">
+  <div class="navbar-btns">
+    <button class="btn-settings"
+            onclick="window.location.href=
+                     'profile-settings.html'">
       ⚙️ Settings
     </button>
     <button class="btn-logout" onclick="logout()">
@@ -335,27 +420,29 @@
   <div class="tab-content active" id="tab-students">
     <div class="section-card">
       <h3>📊 Student Risk Overview</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Class</th>
-            <th>Roll No</th>
-            <th>Attendance %</th>
-            <th>Avg Marks %</th>
-            <th>Risk Level</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="students-tbody">
-          <tr>
-            <td colspan="8" class="loading">
-              Loading students...
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Class</th>
+              <th>Roll No</th>
+              <th>Attendance</th>
+              <th>Avg Marks</th>
+              <th>Risk</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="students-tbody">
+            <tr>
+              <td colspan="8" class="loading">
+                Loading students...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -392,18 +479,16 @@
           <input type="text" id="new-username"
                  placeholder="Create login username">
         </div>
-        <div class="form-group" style="position:relative">
+        <div class="form-group password-wrap">
           <label>Password *</label>
           <input type="password" id="new-password"
-            placeholder="Minimum 6 characters">
-            <button type="button"
-                onclick="togglePassword('new-password',this)"
-                style="position:absolute;right:12px;top:38px;
-                 background:none;border:none;
-                 cursor:pointer;font-size:18px;color:#888">
-              👁️
-            </button>
-          </div>
+                 placeholder="Minimum 6 characters">
+          <button class="toggle-pwd" type="button"
+                  onclick="togglePassword(
+                    'new-password',this)">
+            👁️
+          </button>
+        </div>
       </div>
       <div class="section-divider">
         👨‍👩‍👧 Parent Details
@@ -463,7 +548,7 @@
         💾 Save Attendance
       </button>
       <p class="ok-msg" id="att-ok">
-        ✅ Attendance saved successfully!
+        ✅ Attendance saved!
       </p>
       <p class="err-msg" id="att-err"></p>
     </div>
@@ -480,31 +565,30 @@
         <div class="form-group">
           <label>&nbsp;</label>
           <button class="btn-submit"
-                  onclick="viewAttendance()"
-                  style="width:100%">
+                  onclick="viewAttendance()">
             👁️ View Attendance
           </button>
         </div>
       </div>
-      <table>
-        <thead>
-          <tr><th>Date</th><th>Status</th></tr>
-        </thead>
-        <tbody id="att-history-tbody">
-          <tr>
-            <td colspan="2" class="empty-state">
-              Select a student to view attendance
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Status</th></tr>
+          </thead>
+          <tbody id="att-history-tbody">
+            <tr>
+              <td colspan="2" class="empty-state">
+                Select a student to view attendance
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <!-- MARKS TAB -->
   <div class="tab-content" id="tab-marks">
-
-    <!-- Enter Marks -->
     <div class="section-card">
       <h3>📝 Enter Student Marks</h3>
       <div class="form-grid-2">
@@ -544,12 +628,11 @@
         💾 Save Marks
       </button>
       <p class="ok-msg" id="marks-ok">
-        ✅ Marks saved successfully!
+        ✅ Marks saved!
       </p>
       <p class="err-msg" id="marks-err"></p>
     </div>
 
-    <!-- View and Manage Marks -->
     <div class="section-card">
       <h3>📊 View & Manage Student Marks</h3>
       <div class="form-grid-2">
@@ -562,32 +645,32 @@
         <div class="form-group">
           <label>&nbsp;</label>
           <button class="btn-submit"
-                  onclick="viewMarks()"
-                  style="width:100%">
+                  onclick="viewMarks()">
             👁️ View Marks
           </button>
         </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Subject</th>
-            <th>Exam</th>
-            <th>Score</th>
-            <th>Percentage</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="marks-view-tbody">
-          <tr>
-            <td colspan="5" class="empty-state">
-              Select a student to view marks
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Exam</th>
+              <th>Score</th>
+              <th>%</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="marks-view-tbody">
+            <tr>
+              <td colspan="5" class="empty-state">
+                Select a student to view marks
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-
   </div>
 
 </div>
@@ -617,6 +700,17 @@
     btn.classList.add('active');
     document.getElementById('tab-' + name)
       .classList.add('active');
+  }
+
+  function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      btn.textContent = '👁️';
+    }
   }
 
   async function apiFetch(url, method='GET', body=null) {
@@ -733,14 +827,29 @@
         </td>
         <td>${badges[riskLevel]}</td>
         <td>
-          <button class="btn-notify"
-                  onclick="notify(${s.id})">
-            📧 Notify
-          </button>
-          <button class="btn-view"
-                  onclick="viewStudent(${s.id})">
-            👁️ View
-          </button>
+          <div class="action-btns">
+            <button class="btn-action btn-notify"
+                    onclick="notify(${s.id})">
+              📧
+            </button>
+            <button class="btn-action btn-view"
+                    onclick="viewStudent(${s.id})">
+              👁️
+            </button>
+            <button class="btn-action btn-edit"
+                    onclick="editStudent(
+                      ${s.id},
+                      '${s.name}',
+                      '${s.class_section}',
+                      '${s.roll_number || ''}'
+                    )">
+              ✏️
+            </button>
+            <button class="btn-action btn-delete"
+                    onclick="deleteStudent(${s.id})">
+              🗑️
+            </button>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
@@ -801,48 +910,11 @@
         );
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${s.id}</td>
-          <td><strong>${s.name}</strong></td>
-          <td>${s.class_section}</td>
-          <td>${s.roll_number || '—'}</td>
-          <td>
-            <span class="badge ${attPct >= 75 ?
-            'bg-success' : 'bg-danger'}">
-            ${attPct}%
-            </span>
-          </td>
-          <td>
-            <span class="badge ${avgMarks >= 40 ?
-            'bg-success' : 'bg-danger'}">
-            ${avgMarks}%
-            </span>
-          </td>
-          <td>${badges[riskLevel]}</td>
-          <td>
-          <button class="btn-notify"
-            onclick="notify(${s.id})">
-            📧 Notify
-          </button>
-          <button class="btn-view"
-            onclick="viewStudent(${s.id})">
-            👁️ View
-          </button>
-          <button class="btn-edit"
-            onclick="editStudent(
-              ${s.id},
-              '${s.name}',
-              '${s.class_section}',
-              '${s.roll_number || ''}'
-            )">
-            ✏️ Edit
-          </button>
-          <button class="btn-notify"
-            style="background:#e74c3c"
-            onclick="deleteStudent(${s.id})">
-            🗑️ Delete
-          </button>
-        </td>
-      `;
+          <td>${m.subject_name}</td>
+          <td>${m.exam_name}</td>
+          <td>${m.marks_obtained}/${m.max_marks}</td>
+          <td>${pct}%</td>
+        `;
         marksTbody.appendChild(tr);
       });
     } else {
@@ -860,6 +932,60 @@
       .classList.remove('active');
   }
 
+  async function editStudent(studentId, currentName,
+    currentClass, currentRoll) {
+    const newName = prompt(
+      'Enter new student name:', currentName
+    );
+    if (!newName) return;
+
+    const newClass = prompt(
+      'Enter new class section (e.g. 10-A):',
+      currentClass
+    );
+    if (!newClass) return;
+
+    const newRoll = prompt(
+      'Enter new roll number:', currentRoll
+    );
+
+    const res = await apiFetch(
+      `/teacher/edit-student/${studentId}`, 'PUT', {
+        name: newName,
+        class_section: newClass,
+        roll_number: newRoll || ''
+      }
+    );
+
+    if (res.message) {
+      alert('✅ Student updated successfully!');
+      loadStudents();
+    } else {
+      alert('❌ Failed: ' +
+        (res.error || 'Unknown error'));
+    }
+  }
+
+  async function deleteStudent(studentId) {
+    if (!confirm(
+      'Are you sure you want to delete this student?\n' +
+      'All their data will be permanently deleted!\n' +
+      'This cannot be undone!'
+    )) return;
+
+    const res = await apiFetch(
+      `/teacher/delete-student/${studentId}`, 'DELETE'
+    );
+
+    if (res.message) {
+      alert('✅ Student deleted successfully!');
+      loadStudents();
+    } else {
+      alert('❌ Failed: ' +
+        (res.error || 'Unknown error'));
+    }
+  }
+
   async function loadSubjects() {
     const studentId =
       document.getElementById('m-sid').value;
@@ -874,7 +1000,7 @@
     }
 
     subjectSelect.innerHTML =
-      '<option value="">Loading subjects...</option>';
+      '<option value="">Loading...</option>';
 
     const data = await apiFetch(
       `/subjects/student/${studentId}`
@@ -892,8 +1018,7 @@
       });
     } else {
       subjectSelect.innerHTML =
-        '<option value="">' +
-        'No subjects for this class</option>';
+        '<option value="">No subjects found</option>';
     }
   }
 
@@ -940,11 +1065,9 @@
 
     const res = await apiFetch(
       '/teacher/add-student', 'POST', {
-        name,
-        class_section: classSection,
+        name, class_section: classSection,
         roll_number: rollNumber,
-        username,
-        password,
+        username, password,
         parent_name: parentName,
         parent_email: parentEmail,
         parent_phone: parentPhone
@@ -1015,7 +1138,8 @@
       return;
     }
 
-    const data = await apiFetch(`/attendance/${studentId}`);
+    const data =
+      await apiFetch(`/attendance/${studentId}`);
     const tbody =
       document.getElementById('att-history-tbody');
     tbody.innerHTML = '';
@@ -1040,8 +1164,6 @@
         'No attendance records found</td></tr>';
     }
   }
-
-  // ── MARKS FUNCTIONS ──────────────────────────────
 
   async function submitMarks() {
     const studentId =
@@ -1140,8 +1262,7 @@
     errMsg.style.display = 'none';
 
     if (!newObtained || !newMax) {
-      errMsg.textContent =
-        '❌ Please enter new marks values';
+      errMsg.textContent = '❌ Please enter marks values';
       errMsg.style.display = 'block';
       return;
     }
@@ -1242,22 +1363,24 @@
             </span>
           </td>
           <td>
-            <button class="btn-edit"
-              onclick="editMark(
-                ${m.id},
-                ${m.marks_obtained},
-                ${m.max_marks},
-                '${studentId}'
-              )">
-              ✏️ Edit
-            </button>
-            <button class="btn-notify"
-              onclick="deleteMark(
-                ${m.id},
-                '${studentId}'
-              )">
-              🗑️ Delete
-            </button>
+            <div class="action-btns">
+              <button class="btn-action btn-edit"
+                onclick="editMark(
+                  ${m.id},
+                  ${m.marks_obtained},
+                  ${m.max_marks},
+                  '${studentId}'
+                )">
+                ✏️ Edit
+              </button>
+              <button class="btn-action btn-delete"
+                onclick="deleteMark(
+                  ${m.id},
+                  '${studentId}'
+                )">
+                🗑️ Delete
+              </button>
+            </div>
           </td>
         `;
         tbody.appendChild(tr);
@@ -1272,22 +1395,19 @@
   async function editMark(markId, currentObtained,
     currentMax, studentId) {
     const newObtained = prompt(
-      `Enter new marks obtained ` +
-      `(current: ${currentObtained}):`,
+      `New marks obtained (current: ${currentObtained}):`,
       currentObtained
     );
     if (!newObtained) return;
 
     const newMax = prompt(
-      `Enter new maximum marks (current: ${currentMax}):`,
+      `New maximum marks (current: ${currentMax}):`,
       currentMax
     );
     if (!newMax) return;
 
     if (parseInt(newObtained) > parseInt(newMax)) {
-      alert(
-        '❌ Marks obtained cannot exceed maximum marks!'
-      );
+      alert('❌ Marks cannot exceed maximum marks!');
       return;
     }
 
@@ -1299,10 +1419,10 @@
     );
 
     if (res.message) {
-      alert('✅ Marks updated successfully!');
+      alert('✅ Marks updated!');
       viewMarks();
     } else {
-      alert('❌ Failed to update: ' +
+      alert('❌ Failed: ' +
         (res.error || 'Unknown error'));
     }
   }
@@ -1317,10 +1437,10 @@
     );
 
     if (res.message) {
-      alert('✅ Marks deleted successfully!');
+      alert('✅ Marks deleted!');
       viewMarks();
     } else {
-      alert('❌ Failed to delete: ' +
+      alert('❌ Failed: ' +
         (res.error || 'Unknown error'));
     }
   }
@@ -1335,71 +1455,7 @@
       });
     });
 
-  // Initialize
   loadStudents();
-  function togglePassword(inputId, btn) {
-  const input = document.getElementById(inputId);
-  if (input.type === 'password') {
-    input.type = 'text';
-    btn.textContent = '🙈';
-  } else {
-    input.type = 'password';
-    btn.textContent = '👁️';
-  }
-}
-async function editStudent(studentId, currentName,
-  currentClass, currentRoll) {
-  const newName = prompt(
-    'Enter new student name:',
-    currentName
-  );
-  if (!newName) return;
-
-  const newClass = prompt(
-    'Enter new class section (e.g. 10-A):',
-    currentClass
-  );
-  if (!newClass) return;
-
-  const newRoll = prompt(
-    'Enter new roll number:',
-    currentRoll
-  );
-
-  const res = await apiFetch(
-    `/teacher/edit-student/${studentId}`, 'PUT', {
-      name: newName,
-      class_section: newClass,
-      roll_number: newRoll || ''
-    }
-  );
-
-  if (res.message) {
-    alert('✅ Student updated successfully!');
-    loadStudents();
-  } else {
-    alert('❌ Failed: ' + (res.error || 'Unknown error'));
-  }
-}
-
-async function deleteStudent(studentId) {
-  if (!confirm(
-    'Are you sure you want to delete this student?\n' +
-    'All their attendance, marks and data will be deleted!\n' +
-    'This cannot be undone!'
-  )) return;
-
-  const res = await apiFetch(
-    `/teacher/delete-student/${studentId}`, 'DELETE'
-  );
-
-  if (res.message) {
-    alert('✅ Student deleted successfully!');
-    loadStudents();
-  } else {
-    alert('❌ Failed: ' + (res.error || 'Unknown error'));
-  }
-}
 </script>
 </body>
 </html>
