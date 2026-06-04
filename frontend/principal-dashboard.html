@@ -137,15 +137,15 @@
       <h3>⏳ Teachers Pending Approval</h3>
       <table>
         <thead>
-          <tr>
-            <th>Name</th><th>Email</th>
-            <th>Specialization</th><th>Username</th>
-            <th>Action</th>
-          </tr>
+        <tr>
+          <th>Name</th><th>Email</th>
+          <th>Specialization</th><th>Username</th>
+          <th>Approve</th><th>Delete</th>
+        </tr>
         </thead>
         <tbody id="pending-tbody">
           <tr>
-            <td colspan="5"
+            <td colspan="6"
                 style="text-align:center;color:#999">
               Loading...
             </td>
@@ -239,35 +239,42 @@
   }
 
   async function loadPending() {
-    const data = await apiFetch('/principal/pending-teachers');
-    const tbody = document.getElementById('pending-tbody');
-    tbody.innerHTML = '';
-    document.getElementById('pending-count').textContent =
-      data.pending.length;
+  const data = await apiFetch('/principal/pending-teachers');
+  const tbody = document.getElementById('pending-tbody');
+  tbody.innerHTML = '';
+  document.getElementById('pending-count').textContent =
+    data.pending.length;
 
-    if (data.pending.length === 0) {
-      tbody.innerHTML =
-        '<tr><td colspan="5" style="text-align:center;color:#999">' +
-        'No pending approvals</td></tr>';
-      return;
-    }
-    data.pending.forEach(t => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${t.name}</td>
-        <td>${t.email}</td>
-        <td>${t.subject_specialization || '—'}</td>
-        <td>${t.username}</td>
-        <td>
-          <button class="btn-approve"
-                  onclick="approveTeacher(${t.id}, this)">
-            ✅ Approve
-          </button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
+  if (data.pending.length === 0) {
+    tbody.innerHTML =
+      '<tr><td colspan="6" style="text-align:center;' +
+      'color:#999">No pending approvals</td></tr>';
+    return;
   }
+  data.pending.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${t.name}</td>
+      <td>${t.email}</td>
+      <td>${t.subject_specialization || '—'}</td>
+      <td>${t.username}</td>
+      <td>
+        <button class="btn-approve"
+                onclick="approveTeacher(${t.id}, this)">
+          ✅ Approve
+        </button>
+      </td>
+      <td>
+        <button class="btn-approve"
+                style="background:#e74c3c"
+                onclick="deleteTeacher(${t.id})">
+          🗑️ Delete
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
 
   async function approveTeacher(userId, btn) {
     await apiFetch(
@@ -280,27 +287,53 @@
   }
 
   async function loadTeachers() {
-    const data = await apiFetch('/principal/all-teachers');
-    const tbody = document.getElementById('teachers-tbody');
-    tbody.innerHTML = '';
-    document.getElementById('total-teachers').textContent =
-      data.teachers.length;
-    data.teachers.forEach(t => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${t.name}</td>
-        <td>${t.email}</td>
-        <td>${t.subject_specialization || '—'}</td>
-        <td>
-          <span class="badge ${t.is_approved ?
-            'bg-success' : 'bg-warning'}">
-            ${t.is_approved ? '✅ Active' : '⏳ Pending'}
-          </span>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
+  const data = await apiFetch('/principal/all-teachers');
+  const tbody = document.getElementById('teachers-tbody');
+  tbody.innerHTML = '';
+  document.getElementById('total-teachers').textContent =
+    data.teachers.length;
+  data.teachers.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${t.name}</td>
+      <td>${t.email}</td>
+      <td>${t.subject_specialization || '—'}</td>
+      <td>
+        <span class="badge ${t.is_approved ?
+          'bg-success' : 'bg-warning'}">
+          ${t.is_approved ? '✅ Active' : '⏳ Pending'}
+        </span>
+      </td>
+      <td>
+        <button class="btn-approve"
+                onclick="deleteTeacher(${t.id})"
+                style="background:#e74c3c">
+          🗑️ Delete
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+async function deleteTeacher(userId) {
+  if (!confirm(
+    'Are you sure you want to delete this teacher? ' +
+    'This cannot be undone!'
+  )) return;
+
+  const res = await apiFetch(
+    `/principal/delete-teacher/${userId}`, 'DELETE'
+  );
+
+  if (res.message) {
+    alert('✅ Teacher deleted successfully!');
+    loadTeachers();
+    loadPending();
+  } else {
+    alert('❌ Failed: ' + (res.error || 'Unknown error'));
   }
+}
 
   async function loadStudents() {
     const data = await apiFetch('/principal/all-students');

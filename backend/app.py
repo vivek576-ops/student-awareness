@@ -927,5 +927,87 @@ def change_username():
     finally:
         conn.close()
 
+    # ─── DELETE TEACHER ───────────────────────────────────────────────
+    @app.route('/api/v1/principal/delete-teacher/<int:user_id>',
+           methods=['DELETE'])
+    @principal_required
+    def delete_teacher(user_id):
+        conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT id FROM users WHERE id=%s AND role='teacher'",
+                (user_id,)
+            )
+            if not cursor.fetchone():
+                return jsonify({
+                    'error': 'Teacher not found'
+                }), 404
+            cursor.execute(
+                "DELETE FROM users WHERE id=%s",
+                (user_id,)
+            )
+        conn.commit()
+        return jsonify({
+            'message': 'Teacher deleted successfully'
+        })
+    finally:
+        conn.close()
+
+    # ─── DELETE STUDENT ───────────────────────────────────────────────
+@app.route('/api/v1/teacher/delete-student/<int:student_id>',
+           methods=['DELETE'])
+@teacher_required
+def delete_student(student_id):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT user_id FROM students WHERE id=%s",
+                (student_id,)
+            )
+            student = cursor.fetchone()
+            if not student:
+                return jsonify({
+                    'error': 'Student not found'
+                }), 404
+            cursor.execute(
+                "DELETE FROM users WHERE id=%s",
+                (student['user_id'],)
+            )
+        conn.commit()
+        return jsonify({
+            'message': 'Student deleted successfully'
+        })
+    finally:
+        conn.close()
+
+# ─── EDIT STUDENT ─────────────────────────────────────────────────
+@app.route('/api/v1/teacher/edit-student/<int:student_id>',
+           methods=['PUT'])
+@teacher_required
+def edit_student(student_id):
+    data = request.get_json()
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                """UPDATE students
+                   SET name=%s,
+                       class_section=%s,
+                       roll_number=%s
+                   WHERE id=%s""",
+                (data.get('name'),
+                 data.get('class_section'),
+                 data.get('roll_number'),
+                 student_id)
+            )
+        conn.commit()
+        return jsonify({
+            'message': 'Student updated successfully'
+        })
+    finally:
+        conn.close()
+
 if __name__ == '__main__':
     app.run(debug=True)

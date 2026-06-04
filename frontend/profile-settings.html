@@ -174,11 +174,19 @@
              placeholder="Enter new username"
              minlength="4">
     </div>
-    <div class="form-group">
-      <label>Current Password (to verify)</label>
-      <input type="password" id="username-password"
-             placeholder="Enter current password">
-    </div>
+    <div class="form-group" style="position:relative">
+  <label>Current Password (to verify)</label>
+  <input type="password" id="username-password"
+         placeholder="Enter current password">
+  <button type="button"
+          onclick="togglePassword('username-password',this)"
+          style="position:absolute;right:12px;top:38px;
+                 background:none;border:none;
+                 cursor:pointer;font-size:18px;color:#888">
+    👁️
+  </button>
+</div>
+
     <button class="btn-save" id="username-btn"
             onclick="changeUsername()">
       💾 Update Username
@@ -190,24 +198,47 @@
   <!-- Change Password -->
   <div class="section-card">
     <h3>🔐 Change Password</h3>
-    <div class="form-group">
-      <label>Current Password</label>
-      <input type="password" id="current-password"
-             placeholder="Enter current password">
-    </div>
-    <div class="form-group">
-      <label>New Password</label>
-      <input type="password" id="new-password"
-             placeholder="Minimum 6 characters"
-             oninput="checkStrength(this.value)">
-      <div class="password-strength"
-           id="strength-msg"></div>
-    </div>
-    <div class="form-group">
-      <label>Confirm New Password</label>
-      <input type="password" id="confirm-password"
-             placeholder="Repeat new password">
-    </div>
+    <div class="form-group" style="position:relative">
+  <label>Current Password</label>
+  <input type="password" id="current-password"
+         placeholder="Enter current password">
+  <button type="button"
+          onclick="togglePassword('current-password',this)"
+          style="position:absolute;right:12px;top:38px;
+                 background:none;border:none;
+                 cursor:pointer;font-size:18px;color:#888">
+    👁️
+  </button>
+</div>
+
+<div class="form-group" style="position:relative">
+  <label>New Password</label>
+  <input type="password" id="new-password"
+         placeholder="Minimum 6 characters"
+         oninput="checkStrength(this.value)">
+  <button type="button"
+          onclick="togglePassword('new-password',this)"
+          style="position:absolute;right:12px;top:38px;
+                 background:none;border:none;
+                 cursor:pointer;font-size:18px;color:#888">
+    👁️
+  </button>
+  <div class="password-strength" id="strength-msg"></div>
+</div>
+
+<div class="form-group" style="position:relative">
+  <label>Confirm New Password</label>
+  <input type="password" id="confirm-password"
+         placeholder="Repeat new password">
+  <button type="button"
+          onclick="togglePassword('confirm-password',this)"
+          style="position:absolute;right:12px;top:38px;
+                 background:none;border:none;
+                 cursor:pointer;font-size:18px;color:#888">
+    👁️
+  </button>
+</div>
+
     <button class="btn-save" id="password-btn"
             onclick="changePassword()">
       🔐 Update Password
@@ -427,6 +458,17 @@
   }
 
   loadProfile();
+  function togglePassword(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁️';
+  }
+}
+
 </script>
 </body>
 </html>

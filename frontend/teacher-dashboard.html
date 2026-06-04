@@ -205,8 +205,9 @@
     <table>
       <thead>
         <tr>
-          <th>Subject</th><th>Exam</th>
-          <th>Score</th><th>%</th>
+          <th>Name</th><th>Email</th>
+          <th>Specialization</th>
+          <th>Status</th><th>Action</th>
         </tr>
       </thead>
       <tbody id="modal-marks"></tbody>
@@ -391,11 +392,18 @@
           <input type="text" id="new-username"
                  placeholder="Create login username">
         </div>
-        <div class="form-group">
+        <div class="form-group" style="position:relative">
           <label>Password *</label>
           <input type="password" id="new-password"
-                 placeholder="Minimum 6 characters">
-        </div>
+            placeholder="Minimum 6 characters">
+            <button type="button"
+                onclick="togglePassword('new-password',this)"
+                style="position:absolute;right:12px;top:38px;
+                 background:none;border:none;
+                 cursor:pointer;font-size:18px;color:#888">
+              👁️
+            </button>
+          </div>
       </div>
       <div class="section-divider">
         👨‍👩‍👧 Parent Details
@@ -793,11 +801,48 @@
         );
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${m.subject_name}</td>
-          <td>${m.exam_name}</td>
-          <td>${m.marks_obtained}/${m.max_marks}</td>
-          <td>${pct}%</td>
-        `;
+          <td>${s.id}</td>
+          <td><strong>${s.name}</strong></td>
+          <td>${s.class_section}</td>
+          <td>${s.roll_number || '—'}</td>
+          <td>
+            <span class="badge ${attPct >= 75 ?
+            'bg-success' : 'bg-danger'}">
+            ${attPct}%
+            </span>
+          </td>
+          <td>
+            <span class="badge ${avgMarks >= 40 ?
+            'bg-success' : 'bg-danger'}">
+            ${avgMarks}%
+            </span>
+          </td>
+          <td>${badges[riskLevel]}</td>
+          <td>
+          <button class="btn-notify"
+            onclick="notify(${s.id})">
+            📧 Notify
+          </button>
+          <button class="btn-view"
+            onclick="viewStudent(${s.id})">
+            👁️ View
+          </button>
+          <button class="btn-edit"
+            onclick="editStudent(
+              ${s.id},
+              '${s.name}',
+              '${s.class_section}',
+              '${s.roll_number || ''}'
+            )">
+            ✏️ Edit
+          </button>
+          <button class="btn-notify"
+            style="background:#e74c3c"
+            onclick="deleteStudent(${s.id})">
+            🗑️ Delete
+          </button>
+        </td>
+      `;
         marksTbody.appendChild(tr);
       });
     } else {
@@ -1292,6 +1337,69 @@
 
   // Initialize
   loadStudents();
+  function togglePassword(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁️';
+  }
+}
+async function editStudent(studentId, currentName,
+  currentClass, currentRoll) {
+  const newName = prompt(
+    'Enter new student name:',
+    currentName
+  );
+  if (!newName) return;
+
+  const newClass = prompt(
+    'Enter new class section (e.g. 10-A):',
+    currentClass
+  );
+  if (!newClass) return;
+
+  const newRoll = prompt(
+    'Enter new roll number:',
+    currentRoll
+  );
+
+  const res = await apiFetch(
+    `/teacher/edit-student/${studentId}`, 'PUT', {
+      name: newName,
+      class_section: newClass,
+      roll_number: newRoll || ''
+    }
+  );
+
+  if (res.message) {
+    alert('✅ Student updated successfully!');
+    loadStudents();
+  } else {
+    alert('❌ Failed: ' + (res.error || 'Unknown error'));
+  }
+}
+
+async function deleteStudent(studentId) {
+  if (!confirm(
+    'Are you sure you want to delete this student?\n' +
+    'All their attendance, marks and data will be deleted!\n' +
+    'This cannot be undone!'
+  )) return;
+
+  const res = await apiFetch(
+    `/teacher/delete-student/${studentId}`, 'DELETE'
+  );
+
+  if (res.message) {
+    alert('✅ Student deleted successfully!');
+    loadStudents();
+  } else {
+    alert('❌ Failed: ' + (res.error || 'Unknown error'));
+  }
+}
 </script>
 </body>
 </html>
