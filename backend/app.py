@@ -819,5 +819,113 @@ def get_me():
     finally:
         conn.close()
 
+# ─── CHANGE PASSWORD ──────────────────────────────────────────────
+@app.route('/api/v1/auth/change-password', methods=['POST'])
+@jwt_required()
+def change_password():
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    current_password = data.get('current_password')
+    new_password = data.get('new_password')
+    confirm_password = data.get('confirm_password')
+
+    if not all([current_password, new_password, confirm_password]):
+        return jsonify({'error': 'All fields are required'}), 400
+
+    if new_password != confirm_password:
+        return jsonify({'error': 'New passwords do not match'}), 400
+
+    if len(new_password) < 6:
+        return jsonify({
+            'error': 'Password must be at least 6 characters'
+        }), 400
+
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT * FROM users WHERE id=%s",
+                (user_id,)
+            )
+            user = cursor.fetchone()
+            if not user:
+                return jsonify({'error': 'User not found'}), 404
+
+            if not check_password_hash(
+                user['password_hash'], current_password
+            ):
+                return jsonify({
+                    'error': 'Current password is incorrect'
+                }), 401
+
+            new_hash = generate_password_hash(new_password)
+            cursor.execute(
+                "UPDATE users SET password_hash=%s WHERE id=%s",
+                (new_hash, user_id)
+            )
+        conn.commit()
+        return jsonify({
+            'message': 'Password changed successfully!'
+        })
+    finally:
+        conn.close()
+
+# ─── CHANGE USERNAME ──────────────────────────────────────────────
+@app.route('/api/v1/auth/change-username', methods=['POST'])
+@jwt_required()
+def change_username():
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    new_username = data.get('new_username')
+    current_password = data.get('current_password')
+
+    if not all([new_username, current_password]):
+        return jsonify({'error': 'All fields are required'}), 400
+
+    if len(new_username) < 4:
+        return jsonify({
+            'error': 'Username must be at least 4 characters'
+        }), 400
+
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT * FROM users WHERE id=%s",
+                (user_id,)
+            )
+            user = cursor.fetchone()
+            if not user:
+                return jsonify({'error': 'User not found'}), 404
+
+            if not check_password_hash(
+                user['password_hash'], current_password
+            ):
+                return jsonify({
+                    'error': 'Current password is incorrect'
+                }), 401
+
+            # Check if username already exists
+            cursor.execute(
+                "SELECT id FROM users WHERE username=%s AND id!=%s",
+                (new_username, user_id)
+            )
+            if cursor.fetchone():
+                return jsonify({
+                    'error': 'Username already taken'
+                }), 409
+
+            cursor.execute(
+                "UPDATE users SET username=%s WHERE id=%s",
+                (new_username, user_id)
+            )
+        conn.commit()
+        return jsonify({
+            'message': 'Username changed successfully! '
+                       'Please login again.'
+        })
+    finally:
+        conn.close()
+
 if __name__ == '__main__':
     app.run(debug=True)

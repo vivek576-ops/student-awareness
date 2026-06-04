@@ -240,7 +240,18 @@
 
 <nav class="navbar">
   <h2>👨‍🎓 Student Dashboard — EduTrack</h2>
-  <button class="btn-logout" onclick="logout()">Logout</button>
+  <div style="display:flex;gap:10px">
+    <button onclick="window.location.href='profile-settings.html'"
+            style="background:rgba(255,255,255,0.2);
+                   color:white; border:none;
+                   padding:8px 16px; border-radius:6px;
+                   cursor:pointer; font-size:14px">
+      ⚙️ Settings
+    </button>
+    <button class="btn-logout" onclick="logout()">
+      Logout
+    </button>
+  </div>
 </nav>
 
 <div class="container">

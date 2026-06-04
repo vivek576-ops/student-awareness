@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Settings — EduTrack</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',sans-serif; background:#f0f2f5; }
+    .navbar {
+      padding:16px 32px;
+      display:flex; justify-content:space-between;
+      align-items:center; color:white;
+    }
+    .navbar.principal { background:linear-gradient(135deg,#856404,#a07800); }
+    .navbar.teacher   { background:linear-gradient(135deg,#155724,#1e8449); }
+    .navbar.student   { background:linear-gradient(135deg,#004085,#0f3460); }
+    .navbar h2 { font-size:20px; }
+    .btn-back {
+      background:rgba(255,255,255,0.2);
+      color:white; border:none;
+      padding:8px 20px; border-radius:6px;
+      cursor:pointer; font-size:14px;
+      text-decoration:none;
+    }
+    .btn-back:hover { background:rgba(255,255,255,0.3); }
+    .container {
+      max-width:600px; margin:40px auto;
+      padding:0 20px;
+    }
+    .profile-header {
+      background:white; border-radius:16px;
+      padding:32px; text-align:center;
+      margin-bottom:24px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    }
+    .avatar {
+      width:80px; height:80px;
+      border-radius:50%;
+      display:flex; align-items:center;
+      justify-content:center;
+      font-size:32px; margin:0 auto 16px;
+    }
+    .avatar.principal { background:#fff3cd; }
+    .avatar.teacher   { background:#d4edda; }
+    .avatar.student   { background:#cce5ff; }
+    .profile-header h2 {
+      font-size:22px; color:#1a1a2e;
+      margin-bottom:4px;
+    }
+    .profile-header p {
+      font-size:14px; color:#888;
+    }
+    .role-badge {
+      display:inline-block;
+      padding:4px 16px; border-radius:20px;
+      font-size:13px; font-weight:600;
+      margin-top:8px;
+    }
+    .role-badge.principal { background:#fff3cd; color:#856404; }
+    .role-badge.teacher   { background:#d4edda; color:#155724; }
+    .role-badge.student   { background:#cce5ff; color:#004085; }
+    .section-card {
+      background:white; border-radius:16px;
+      padding:28px; margin-bottom:20px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    }
+    .section-card h3 {
+      font-size:17px; color:#1a1a2e;
+      margin-bottom:20px;
+      padding-bottom:10px;
+      border-bottom:2px solid #f0f2f5;
+      display:flex; align-items:center;
+      gap:8px;
+    }
+    .form-group { margin-bottom:16px; }
+    .form-group label {
+      display:block; font-size:12px;
+      font-weight:700; color:#555;
+      margin-bottom:6px; text-transform:uppercase;
+      letter-spacing:0.5px;
+    }
+    .form-group input {
+      width:100%; padding:12px 16px;
+      border:2px solid #e0e0e0;
+      border-radius:10px; font-size:15px;
+      outline:none; transition:border-color 0.3s;
+    }
+    .form-group input:focus {
+      border-color:#0f3460;
+    }
+    .btn-save {
+      width:100%; padding:14px;
+      border:none; border-radius:10px;
+      font-size:15px; font-weight:700;
+      cursor:pointer; transition:all 0.3s;
+      margin-top:4px;
+    }
+    .btn-save.principal { background:#856404; color:white; }
+    .btn-save.teacher   { background:#155724; color:white; }
+    .btn-save.student   { background:#0f3460; color:white; }
+    .btn-save:hover { opacity:0.9; transform:translateY(-1px); }
+    .ok-msg {
+      background:#d4edda; color:#155724;
+      padding:12px 16px; border-radius:10px;
+      font-size:14px; margin-top:12px;
+      display:none; text-align:center;
+    }
+    .err-msg {
+      background:#ffe0e0; color:#c0392b;
+      padding:12px 16px; border-radius:10px;
+      font-size:14px; margin-top:12px;
+      display:none; text-align:center;
+    }
+    .password-strength {
+      margin-top:6px; font-size:12px;
+    }
+    .strength-weak   { color:#e74c3c; }
+    .strength-medium { color:#e67e22; }
+    .strength-strong { color:#27ae60; }
+    .info-grid {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:12px; margin-bottom:4px;
+    }
+    .info-item {
+      background:#f8f9fa; border-radius:8px;
+      padding:12px;
+    }
+    .info-item .i-label {
+      font-size:11px; color:#888;
+      text-transform:uppercase; font-weight:700;
+    }
+    .info-item .i-value {
+      font-size:15px; color:#1a1a2e;
+      font-weight:600; margin-top:4px;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <h2>⚙️ Profile Settings</h2>
+  <button class="btn-back" onclick="goBack()">
+    ← Back to Dashboard
+  </button>
+</nav>
+
+<div class="container">
+
+  <!-- Profile Info -->
+  <div class="profile-header">
+    <div class="avatar" id="avatar">👤</div>
+    <h2 id="profile-name">Loading...</h2>
+    <p id="profile-username">@username</p>
+    <span class="role-badge" id="role-badge">Role</span>
+    <div class="info-grid" style="margin-top:20px">
+      <div class="info-item">
+        <div class="i-label">Account ID</div>
+        <div class="i-value" id="info-id">—</div>
+      </div>
+      <div class="info-item">
+        <div class="i-label">Role</div>
+        <div class="i-value" id="info-role">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Username -->
+  <div class="section-card">
+    <h3>👤 Change Username</h3>
+    <div class="form-group">
+      <label>New Username</label>
+      <input type="text" id="new-username"
+             placeholder="Enter new username"
+             minlength="4">
+    </div>
+    <div class="form-group">
+      <label>Current Password (to verify)</label>
+      <input type="password" id="username-password"
+             placeholder="Enter current password">
+    </div>
+    <button class="btn-save" id="username-btn"
+            onclick="changeUsername()">
+      💾 Update Username
+    </button>
+    <p class="ok-msg" id="username-ok"></p>
+    <p class="err-msg" id="username-err"></p>
+  </div>
+
+  <!-- Change Password -->
+  <div class="section-card">
+    <h3>🔐 Change Password</h3>
+    <div class="form-group">
+      <label>Current Password</label>
+      <input type="password" id="current-password"
+             placeholder="Enter current password">
+    </div>
+    <div class="form-group">
+      <label>New Password</label>
+      <input type="password" id="new-password"
+             placeholder="Minimum 6 characters"
+             oninput="checkStrength(this.value)">
+      <div class="password-strength"
+           id="strength-msg"></div>
+    </div>
+    <div class="form-group">
+      <label>Confirm New Password</label>
+      <input type="password" id="confirm-password"
+             placeholder="Repeat new password">
+    </div>
+    <button class="btn-save" id="password-btn"
+            onclick="changePassword()">
+      🔐 Update Password
+    </button>
+    <p class="ok-msg" id="password-ok"></p>
+    <p class="err-msg" id="password-err"></p>
+  </div>
+
+</div>
+
+<script>
+  const TOKEN = localStorage.getItem('jwt_token');
+  const ROLE = localStorage.getItem('user_role');
+  const BASE = 'https://student-awareness-backend.onrender.com/api/v1';
+
+  if (!TOKEN) window.location.href = 'index.html';
+
+  // Set role based styling
+  const navbar = document.getElementById('navbar');
+  const avatar = document.getElementById('avatar');
+  const badge = document.getElementById('role-badge');
+  const btns = document.querySelectorAll('.btn-save');
+
+  const roleConfig = {
+    principal: { emoji: '👑', label: 'Principal' },
+    teacher:   { emoji: '👨‍🏫', label: 'Teacher' },
+    student:   { emoji: '👨‍🎓', label: 'Student' }
+  };
+
+  if (ROLE && roleConfig[ROLE]) {
+    navbar.classList.add(ROLE);
+    avatar.classList.add(ROLE);
+    avatar.textContent = roleConfig[ROLE].emoji;
+    badge.classList.add(ROLE);
+    badge.textContent = roleConfig[ROLE].label;
+    btns.forEach(btn => btn.classList.add(ROLE));
+  }
+
+  function goBack() {
+    if (ROLE === 'principal') {
+      window.location.href = 'principal-dashboard.html';
+    } else if (ROLE === 'teacher') {
+      window.location.href = 'teacher-dashboard.html';
+    } else {
+      window.location.href = 'student-dashboard.html';
+    }
+  }
+
+  async function apiFetch(url, method='GET', body=null) {
+    const opts = {
+      method,
+      headers: {
+        'Authorization': `Bearer ${TOKEN}`,
+        'Content-Type': 'application/json'
+      }
+    };
+    if (body) opts.body = JSON.stringify(body);
+    try {
+      const res = await fetch(BASE + url, opts);
+      return res.json();
+    } catch(e) {
+      return { error: 'Connection failed' };
+    }
+  }
+
+  async function loadProfile() {
+    const data = await apiFetch('/auth/me');
+    if (data.username) {
+      document.getElementById('profile-name').textContent =
+        data.name || data.username;
+      document.getElementById('profile-username').textContent =
+        '@' + data.username;
+      document.getElementById('info-id').textContent =
+        data.user_id;
+      document.getElementById('info-role').textContent =
+        data.role.charAt(0).toUpperCase() + data.role.slice(1);
+    }
+  }
+
+  function checkStrength(password) {
+    const msg = document.getElementById('strength-msg');
+    if (password.length === 0) {
+      msg.textContent = '';
+      return;
+    }
+    if (password.length < 6) {
+      msg.textContent = '⚠️ Too short';
+      msg.className = 'password-strength strength-weak';
+    } else if (
+      password.length < 8 ||
+      !/[0-9]/.test(password)
+    ) {
+      msg.textContent = '🟡 Medium strength';
+      msg.className = 'password-strength strength-medium';
+    } else if (
+      password.length >= 8 &&
+      /[0-9]/.test(password) &&
+      /[A-Z]/.test(password)
+    ) {
+      msg.textContent = '✅ Strong password';
+      msg.className = 'password-strength strength-strong';
+    } else {
+      msg.textContent = '🟡 Medium strength';
+      msg.className = 'password-strength strength-medium';
+    }
+  }
+
+  async function changeUsername() {
+    const newUsername =
+      document.getElementById('new-username').value.trim();
+    const password =
+      document.getElementById('username-password').value;
+    const okMsg = document.getElementById('username-ok');
+    const errMsg = document.getElementById('username-err');
+    okMsg.style.display = 'none';
+    errMsg.style.display = 'none';
+
+    if (!newUsername || !password) {
+      errMsg.textContent = '❌ Please fill all fields';
+      errMsg.style.display = 'block';
+      return;
+    }
+
+    if (newUsername.length < 4) {
+      errMsg.textContent =
+        '❌ Username must be at least 4 characters';
+      errMsg.style.display = 'block';
+      return;
+    }
+
+    const res = await apiFetch(
+      '/auth/change-username', 'POST', {
+        new_username: newUsername,
+        current_password: password
+      }
+    );
+
+    if (res.message) {
+      okMsg.textContent = '✅ ' + res.message;
+      okMsg.style.display = 'block';
+      document.getElementById('new-username').value = '';
+      document.getElementById('username-password').value = '';
+      // Update display
+      document.getElementById('profile-username')
+        .textContent = '@' + newUsername;
+      // Update localStorage
+      setTimeout(() => {
+        localStorage.clear();
+        window.location.href = 'index.html';
+      }, 2000);
+    } else {
+      errMsg.textContent =
+        '❌ ' + (res.error || 'Failed to update username');
+      errMsg.style.display = 'block';
+    }
+  }
+
+  async function changePassword() {
+    const currentPass =
+      document.getElementById('current-password').value;
+    const newPass =
+      document.getElementById('new-password').value;
+    const confirmPass =
+      document.getElementById('confirm-password').value;
+    const okMsg = document.getElementById('password-ok');
+    const errMsg = document.getElementById('password-err');
+    okMsg.style.display = 'none';
+    errMsg.style.display = 'none';
+
+    if (!currentPass || !newPass || !confirmPass) {
+      errMsg.textContent = '❌ Please fill all fields';
+      errMsg.style.display = 'block';
+      return;
+    }
+
+    if (newPass.length < 6) {
+      errMsg.textContent =
+        '❌ New password must be at least 6 characters';
+      errMsg.style.display = 'block';
+      return;
+    }
+
+    if (newPass !== confirmPass) {
+      errMsg.textContent =
+        '❌ New passwords do not match';
+      errMsg.style.display = 'block';
+      return;
+    }
+
+    if (currentPass === newPass) {
+      errMsg.textContent =
+        '❌ New password must be different from current';
+      errMsg.style.display = 'block';
+      return;
+    }
+
+    const res = await apiFetch(
+      '/auth/change-password', 'POST', {
+        current_password: currentPass,
+        new_password: newPass,
+        confirm_password: confirmPass
+      }
+    );
+
+    if (res.message) {
+      okMsg.textContent = '✅ ' + res.message;
+      okMsg.style.display = 'block';
+      document.getElementById('current-password').value = '';
+      document.getElementById('new-password').value = '';
+      document.getElementById('confirm-password').value = '';
+      document.getElementById('strength-msg').textContent = '';
+    } else {
+      errMsg.textContent =
+        '❌ ' + (res.error || 'Failed to change password');
+      errMsg.style.display = 'block';
+    }
+  }
+
+  loadProfile();
+</script>
+</body>
+</html>
