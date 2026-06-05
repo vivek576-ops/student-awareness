@@ -8,132 +8,122 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'Segoe UI',sans-serif; background:#f0f2f5; }
     .navbar {
-      padding:16px 32px;
+      padding:14px 16px;
       display:flex; justify-content:space-between;
       align-items:center; color:white;
+      flex-wrap:wrap; gap:8px;
     }
     .navbar.principal { background:linear-gradient(135deg,#856404,#a07800); }
     .navbar.teacher   { background:linear-gradient(135deg,#155724,#1e8449); }
     .navbar.student   { background:linear-gradient(135deg,#004085,#0f3460); }
-    .navbar h2 { font-size:20px; }
+    .navbar h2 { font-size:16px; }
     .btn-back {
       background:rgba(255,255,255,0.2);
       color:white; border:none;
-      padding:8px 20px; border-radius:6px;
-      cursor:pointer; font-size:14px;
-      text-decoration:none;
+      padding:7px 14px; border-radius:6px;
+      cursor:pointer; font-size:12px;
     }
-    .btn-back:hover { background:rgba(255,255,255,0.3); }
     .container {
-      max-width:600px; margin:40px auto;
-      padding:0 20px;
+      max-width:560px; margin:0 auto; padding:16px;
     }
     .profile-header {
       background:white; border-radius:16px;
-      padding:32px; text-align:center;
-      margin-bottom:24px;
+      padding:24px; text-align:center;
+      margin-bottom:16px;
       box-shadow:0 2px 8px rgba(0,0,0,0.08);
     }
     .avatar {
-      width:80px; height:80px;
-      border-radius:50%;
+      width:70px; height:70px; border-radius:50%;
       display:flex; align-items:center;
-      justify-content:center;
-      font-size:32px; margin:0 auto 16px;
+      justify-content:center; font-size:28px;
+      margin:0 auto 12px;
     }
     .avatar.principal { background:#fff3cd; }
     .avatar.teacher   { background:#d4edda; }
     .avatar.student   { background:#cce5ff; }
     .profile-header h2 {
-      font-size:22px; color:#1a1a2e;
-      margin-bottom:4px;
+      font-size:20px; color:#1a1a2e; margin-bottom:3px;
     }
     .profile-header p {
-      font-size:14px; color:#888;
+      font-size:13px; color:#888;
     }
     .role-badge {
-      display:inline-block;
-      padding:4px 16px; border-radius:20px;
-      font-size:13px; font-weight:600;
-      margin-top:8px;
+      display:inline-block; padding:4px 14px;
+      border-radius:20px; font-size:12px;
+      font-weight:600; margin-top:6px;
     }
     .role-badge.principal { background:#fff3cd; color:#856404; }
     .role-badge.teacher   { background:#d4edda; color:#155724; }
     .role-badge.student   { background:#cce5ff; color:#004085; }
+    .info-grid {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:10px; margin-top:16px;
+    }
+    .info-item {
+      background:#f8f9fa; border-radius:8px; padding:10px;
+    }
+    .info-item .i-label {
+      font-size:10px; color:#888;
+      text-transform:uppercase; font-weight:700;
+    }
+    .info-item .i-value {
+      font-size:14px; color:#1a1a2e;
+      font-weight:600; margin-top:3px;
+    }
     .section-card {
       background:white; border-radius:16px;
-      padding:28px; margin-bottom:20px;
+      padding:22px; margin-bottom:16px;
       box-shadow:0 2px 8px rgba(0,0,0,0.08);
     }
     .section-card h3 {
-      font-size:17px; color:#1a1a2e;
-      margin-bottom:20px;
-      padding-bottom:10px;
+      font-size:16px; color:#1a1a2e;
+      margin-bottom:16px; padding-bottom:10px;
       border-bottom:2px solid #f0f2f5;
-      display:flex; align-items:center;
-      gap:8px;
     }
-    .form-group { margin-bottom:16px; }
+    .form-group { margin-bottom:14px; position:relative; }
     .form-group label {
-      display:block; font-size:12px;
-      font-weight:700; color:#555;
-      margin-bottom:6px; text-transform:uppercase;
-      letter-spacing:0.5px;
+      display:block; font-size:11px; font-weight:700;
+      color:#555; margin-bottom:5px;
+      text-transform:uppercase; letter-spacing:0.5px;
     }
     .form-group input {
-      width:100%; padding:12px 16px;
-      border:2px solid #e0e0e0;
-      border-radius:10px; font-size:15px;
-      outline:none; transition:border-color 0.3s;
+      width:100%; padding:11px 16px;
+      border:2px solid #e0e0e0; border-radius:10px;
+      font-size:14px; outline:none;
+      transition:border-color 0.3s;
     }
-    .form-group input:focus {
-      border-color:#0f3460;
+    .form-group input:focus { border-color:#0f3460; }
+    .pwd-input { padding-right:48px !important; }
+    .toggle-pwd {
+      position:absolute; right:12px; top:34px;
+      background:none; border:none;
+      cursor:pointer; font-size:18px; color:#888;
     }
     .btn-save {
-      width:100%; padding:14px;
-      border:none; border-radius:10px;
-      font-size:15px; font-weight:700;
-      cursor:pointer; transition:all 0.3s;
-      margin-top:4px;
+      width:100%; padding:13px; border:none;
+      border-radius:10px; font-size:14px;
+      font-weight:700; cursor:pointer;
+      transition:all 0.3s; margin-top:6px;
     }
     .btn-save.principal { background:#856404; color:white; }
     .btn-save.teacher   { background:#155724; color:white; }
     .btn-save.student   { background:#0f3460; color:white; }
-    .btn-save:hover { opacity:0.9; transform:translateY(-1px); }
+    .btn-save:hover { opacity:0.9; }
     .ok-msg {
       background:#d4edda; color:#155724;
-      padding:12px 16px; border-radius:10px;
-      font-size:14px; margin-top:12px;
+      padding:10px 14px; border-radius:8px;
+      font-size:13px; margin-top:10px;
       display:none; text-align:center;
     }
     .err-msg {
       background:#ffe0e0; color:#c0392b;
-      padding:12px 16px; border-radius:10px;
-      font-size:14px; margin-top:12px;
+      padding:10px 14px; border-radius:8px;
+      font-size:13px; margin-top:10px;
       display:none; text-align:center;
     }
-    .password-strength {
-      margin-top:6px; font-size:12px;
-    }
-    .strength-weak   { color:#e74c3c; }
-    .strength-medium { color:#e67e22; }
-    .strength-strong { color:#27ae60; }
-    .info-grid {
-      display:grid; grid-template-columns:1fr 1fr;
-      gap:12px; margin-bottom:4px;
-    }
-    .info-item {
-      background:#f8f9fa; border-radius:8px;
-      padding:12px;
-    }
-    .info-item .i-label {
-      font-size:11px; color:#888;
-      text-transform:uppercase; font-weight:700;
-    }
-    .info-item .i-value {
-      font-size:15px; color:#1a1a2e;
-      font-weight:600; margin-top:4px;
-    }
+    .strength-weak   { color:#e74c3c; font-size:12px; margin-top:4px; }
+    .strength-medium { color:#e67e22; font-size:12px; margin-top:4px; }
+    .strength-strong { color:#27ae60; font-size:12px; margin-top:4px; }
   </style>
 </head>
 <body>
@@ -141,19 +131,18 @@
 <nav class="navbar" id="navbar">
   <h2>⚙️ Profile Settings</h2>
   <button class="btn-back" onclick="goBack()">
-    ← Back to Dashboard
+    ← Back
   </button>
 </nav>
 
 <div class="container">
 
-  <!-- Profile Info -->
   <div class="profile-header">
     <div class="avatar" id="avatar">👤</div>
     <h2 id="profile-name">Loading...</h2>
     <p id="profile-username">@username</p>
     <span class="role-badge" id="role-badge">Role</span>
-    <div class="info-grid" style="margin-top:20px">
+    <div class="info-grid">
       <div class="info-item">
         <div class="i-label">Account ID</div>
         <div class="i-value" id="info-id">—</div>
@@ -174,19 +163,17 @@
              placeholder="Enter new username"
              minlength="4">
     </div>
-    <div class="form-group" style="position:relative">
-  <label>Current Password (to verify)</label>
-  <input type="password" id="username-password"
-         placeholder="Enter current password">
-  <button type="button"
-          onclick="togglePassword('username-password',this)"
-          style="position:absolute;right:12px;top:38px;
-                 background:none;border:none;
-                 cursor:pointer;font-size:18px;color:#888">
-    👁️
-  </button>
-</div>
-
+    <div class="form-group">
+      <label>Current Password (to verify)</label>
+      <input type="password" id="username-password"
+             placeholder="Enter current password"
+             class="pwd-input">
+      <button class="toggle-pwd" type="button"
+              onclick="togglePassword(
+                'username-password',this)">
+        👁️
+      </button>
+    </div>
     <button class="btn-save" id="username-btn"
             onclick="changeUsername()">
       💾 Update Username
@@ -198,47 +185,41 @@
   <!-- Change Password -->
   <div class="section-card">
     <h3>🔐 Change Password</h3>
-    <div class="form-group" style="position:relative">
-  <label>Current Password</label>
-  <input type="password" id="current-password"
-         placeholder="Enter current password">
-  <button type="button"
-          onclick="togglePassword('current-password',this)"
-          style="position:absolute;right:12px;top:38px;
-                 background:none;border:none;
-                 cursor:pointer;font-size:18px;color:#888">
-    👁️
-  </button>
-</div>
-
-<div class="form-group" style="position:relative">
-  <label>New Password</label>
-  <input type="password" id="new-password"
-         placeholder="Minimum 6 characters"
-         oninput="checkStrength(this.value)">
-  <button type="button"
-          onclick="togglePassword('new-password',this)"
-          style="position:absolute;right:12px;top:38px;
-                 background:none;border:none;
-                 cursor:pointer;font-size:18px;color:#888">
-    👁️
-  </button>
-  <div class="password-strength" id="strength-msg"></div>
-</div>
-
-<div class="form-group" style="position:relative">
-  <label>Confirm New Password</label>
-  <input type="password" id="confirm-password"
-         placeholder="Repeat new password">
-  <button type="button"
-          onclick="togglePassword('confirm-password',this)"
-          style="position:absolute;right:12px;top:38px;
-                 background:none;border:none;
-                 cursor:pointer;font-size:18px;color:#888">
-    👁️
-  </button>
-</div>
-
+    <div class="form-group">
+      <label>Current Password</label>
+      <input type="password" id="current-password"
+             placeholder="Enter current password"
+             class="pwd-input">
+      <button class="toggle-pwd" type="button"
+              onclick="togglePassword(
+                'current-password',this)">
+        👁️
+      </button>
+    </div>
+    <div class="form-group">
+      <label>New Password</label>
+      <input type="password" id="new-password"
+             placeholder="Minimum 6 characters"
+             class="pwd-input"
+             oninput="checkStrength(this.value)">
+      <button class="toggle-pwd" type="button"
+              onclick="togglePassword(
+                'new-password',this)">
+        👁️
+      </button>
+      <div id="strength-msg"></div>
+    </div>
+    <div class="form-group">
+      <label>Confirm New Password</label>
+      <input type="password" id="confirm-password"
+             placeholder="Repeat new password"
+             class="pwd-input">
+      <button class="toggle-pwd" type="button"
+              onclick="togglePassword(
+                'confirm-password',this)">
+        👁️
+      </button>
+    </div>
     <button class="btn-save" id="password-btn"
             onclick="changePassword()">
       🔐 Update Password
@@ -252,20 +233,20 @@
 <script>
   const TOKEN = localStorage.getItem('jwt_token');
   const ROLE = localStorage.getItem('user_role');
-  const BASE = 'https://student-awareness-backend.onrender.com/api/v1';
+  const BASE =
+    'https://student-awareness-backend.onrender.com/api/v1';
 
   if (!TOKEN) window.location.href = 'index.html';
 
-  // Set role based styling
   const navbar = document.getElementById('navbar');
   const avatar = document.getElementById('avatar');
   const badge = document.getElementById('role-badge');
   const btns = document.querySelectorAll('.btn-save');
 
   const roleConfig = {
-    principal: { emoji: '👑', label: 'Principal' },
-    teacher:   { emoji: '👨‍🏫', label: 'Teacher' },
-    student:   { emoji: '👨‍🎓', label: 'Student' }
+    principal: { emoji:'👑', label:'Principal' },
+    teacher:   { emoji:'👨‍🏫', label:'Teacher' },
+    student:   { emoji:'👨‍🎓', label:'Student' }
   };
 
   if (ROLE && roleConfig[ROLE]) {
@@ -284,6 +265,17 @@
       window.location.href = 'teacher-dashboard.html';
     } else {
       window.location.href = 'student-dashboard.html';
+    }
+  }
+
+  function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      btn.textContent = '👁️';
     }
   }
 
@@ -307,42 +299,35 @@
   async function loadProfile() {
     const data = await apiFetch('/auth/me');
     if (data.username) {
-      document.getElementById('profile-name').textContent =
-        data.name || data.username;
-      document.getElementById('profile-username').textContent =
-        '@' + data.username;
-      document.getElementById('info-id').textContent =
-        data.user_id;
-      document.getElementById('info-role').textContent =
-        data.role.charAt(0).toUpperCase() + data.role.slice(1);
+      document.getElementById('profile-name')
+        .textContent = data.name || data.username;
+      document.getElementById('profile-username')
+        .textContent = '@' + data.username;
+      document.getElementById('info-id')
+        .textContent = data.user_id;
+      document.getElementById('info-role')
+        .textContent =
+          data.role.charAt(0).toUpperCase() +
+          data.role.slice(1);
     }
   }
 
   function checkStrength(password) {
     const msg = document.getElementById('strength-msg');
     if (password.length === 0) {
-      msg.textContent = '';
-      return;
+      msg.textContent = ''; return;
     }
     if (password.length < 6) {
       msg.textContent = '⚠️ Too short';
-      msg.className = 'password-strength strength-weak';
+      msg.className = 'strength-weak';
     } else if (
-      password.length < 8 ||
-      !/[0-9]/.test(password)
+      password.length < 8 || !/[0-9]/.test(password)
     ) {
       msg.textContent = '🟡 Medium strength';
-      msg.className = 'password-strength strength-medium';
-    } else if (
-      password.length >= 8 &&
-      /[0-9]/.test(password) &&
-      /[A-Z]/.test(password)
-    ) {
-      msg.textContent = '✅ Strong password';
-      msg.className = 'password-strength strength-strong';
+      msg.className = 'strength-medium';
     } else {
-      msg.textContent = '🟡 Medium strength';
-      msg.className = 'password-strength strength-medium';
+      msg.textContent = '✅ Strong password';
+      msg.className = 'strength-strong';
     }
   }
 
@@ -358,15 +343,12 @@
 
     if (!newUsername || !password) {
       errMsg.textContent = '❌ Please fill all fields';
-      errMsg.style.display = 'block';
-      return;
+      errMsg.style.display = 'block'; return;
     }
-
     if (newUsername.length < 4) {
       errMsg.textContent =
         '❌ Username must be at least 4 characters';
-      errMsg.style.display = 'block';
-      return;
+      errMsg.style.display = 'block'; return;
     }
 
     const res = await apiFetch(
@@ -381,17 +363,15 @@
       okMsg.style.display = 'block';
       document.getElementById('new-username').value = '';
       document.getElementById('username-password').value = '';
-      // Update display
       document.getElementById('profile-username')
         .textContent = '@' + newUsername;
-      // Update localStorage
       setTimeout(() => {
         localStorage.clear();
         window.location.href = 'index.html';
       }, 2000);
     } else {
       errMsg.textContent =
-        '❌ ' + (res.error || 'Failed to update username');
+        '❌ ' + (res.error || 'Failed to update');
       errMsg.style.display = 'block';
     }
   }
@@ -410,29 +390,21 @@
 
     if (!currentPass || !newPass || !confirmPass) {
       errMsg.textContent = '❌ Please fill all fields';
-      errMsg.style.display = 'block';
-      return;
+      errMsg.style.display = 'block'; return;
     }
-
     if (newPass.length < 6) {
       errMsg.textContent =
         '❌ New password must be at least 6 characters';
-      errMsg.style.display = 'block';
-      return;
+      errMsg.style.display = 'block'; return;
     }
-
     if (newPass !== confirmPass) {
-      errMsg.textContent =
-        '❌ New passwords do not match';
-      errMsg.style.display = 'block';
-      return;
+      errMsg.textContent = '❌ Passwords do not match';
+      errMsg.style.display = 'block'; return;
     }
-
     if (currentPass === newPass) {
       errMsg.textContent =
-        '❌ New password must be different from current';
-      errMsg.style.display = 'block';
-      return;
+        '❌ New password must be different';
+      errMsg.style.display = 'block'; return;
     }
 
     const res = await apiFetch(
@@ -458,17 +430,6 @@
   }
 
   loadProfile();
-  function togglePassword(inputId, btn) {
-  const input = document.getElementById(inputId);
-  if (input.type === 'password') {
-    input.type = 'text';
-    btn.textContent = '🙈';
-  } else {
-    input.type = 'password';
-    btn.textContent = '👁️';
-  }
-}
-
 </script>
 </body>
 </html>

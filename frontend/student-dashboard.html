@@ -10,119 +10,161 @@
     body { font-family:'Segoe UI',sans-serif; background:#f0f2f5; }
     .navbar {
       background:linear-gradient(135deg,#004085,#0f3460);
-      color:white; padding:16px 32px;
-      display:flex; justify-content:space-between; align-items:center;
+      color:white; padding:14px 16px;
+      display:flex; justify-content:space-between;
+      align-items:center; flex-wrap:wrap; gap:8px;
     }
-    .navbar h2 { font-size:20px; }
+    .navbar h2 { font-size:15px; }
+    .navbar-btns { display:flex; gap:8px; }
+    .btn-settings {
+      background:rgba(255,255,255,0.2);
+      color:white; border:none;
+      padding:7px 12px; border-radius:6px;
+      cursor:pointer; font-size:12px;
+    }
     .btn-logout {
       background:#e74c3c; color:white; border:none;
-      padding:8px 20px; border-radius:6px; cursor:pointer;
+      padding:7px 14px; border-radius:6px;
+      cursor:pointer; font-size:12px;
     }
-    .container { padding:24px 32px; }
+    .container { padding:14px; }
     .stats-grid {
-      display:grid; grid-template-columns:repeat(3,1fr);
-      gap:16px; margin-bottom:24px;
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px; margin-bottom:16px;
+    }
+    @media(max-width:480px) {
+      .stats-grid { grid-template-columns:1fr 1fr; }
     }
     .stat-card {
-      background:white; border-radius:12px; padding:24px;
-      text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.08);
+      background:white; border-radius:12px;
+      padding:14px; text-align:center;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
     }
     .stat-card .number {
-      font-size:36px; font-weight:700; color:#0f3460;
+      font-size:26px; font-weight:700; color:#0f3460;
     }
-    .stat-card .label { font-size:13px; color:#888; margin-top:6px; }
+    .stat-card .label {
+      font-size:11px; color:#888; margin-top:4px;
+    }
+    .progress-bg {
+      background:#e0e0e0; border-radius:8px;
+      height:8px; margin-top:6px;
+    }
+    .progress-fill {
+      height:8px; border-radius:8px;
+      background:#0f3460; transition:width 1s ease;
+    }
     .grid-2 {
       display:grid; grid-template-columns:1fr 1fr;
-      gap:20px; margin-bottom:24px;
+      gap:14px; margin-bottom:14px;
+    }
+    @media(max-width:600px) {
+      .grid-2 { grid-template-columns:1fr; }
     }
     .section-card {
       background:white; border-radius:12px;
-      padding:24px; margin-bottom:24px;
+      padding:18px; margin-bottom:14px;
       box-shadow:0 2px 8px rgba(0,0,0,0.08);
     }
     .section-card h3 {
-      font-size:17px; color:#1a1a2e; margin-bottom:16px;
-      border-bottom:2px solid #f0f2f5; padding-bottom:10px;
+      font-size:15px; color:#1a1a2e;
+      margin-bottom:14px;
+      border-bottom:2px solid #f0f2f5;
+      padding-bottom:8px;
     }
-    table { width:100%; border-collapse:collapse; font-size:14px; }
+    .table-wrapper {
+      width:100%; overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+    }
+    table {
+      width:100%; border-collapse:collapse;
+      font-size:13px; min-width:320px;
+    }
     th {
       background:#0f3460; color:white;
-      padding:10px 14px; text-align:left;
+      padding:10px 12px; text-align:left;
     }
-    td { padding:10px 14px; border-bottom:1px solid #f0f2f5; }
+    td {
+      padding:10px 12px;
+      border-bottom:1px solid #f0f2f5;
+    }
     .badge {
-      padding:4px 12px; border-radius:20px;
-      font-size:12px; font-weight:600;
+      padding:3px 10px; border-radius:20px;
+      font-size:11px; font-weight:600;
     }
     .bg-danger  { background:#ffe0e0; color:#c0392b; }
     .bg-warning { background:#fff3cd; color:#856404; }
     .bg-success { background:#d4edda; color:#155724; }
-    .progress-bg {
-      background:#e0e0e0; border-radius:8px;
-      height:10px; margin-top:8px;
-    }
-    .progress-fill {
-      height:10px; border-radius:8px;
-      background:#0f3460; transition:width 1s ease;
-    }
     .wellness-grid {
       display:grid; grid-template-columns:repeat(3,1fr);
-      gap:16px;
+      gap:10px;
+    }
+    @media(max-width:480px) {
+      .wellness-grid { grid-template-columns:1fr 1fr; }
     }
     .wellness-card {
       border:2px solid #e0e0e0; border-radius:12px;
-      padding:20px; text-align:center; cursor:pointer;
+      padding:14px; text-align:center; cursor:pointer;
       transition:all 0.3s;
     }
     .wellness-card:hover {
       border-color:#0f3460; background:#f0f4ff;
-      transform:translateY(-2px);
     }
-    .wellness-card .icon { font-size:30px; margin-bottom:8px; }
-    .wellness-card h4 { font-size:14px; color:#1a1a2e; }
-    .wellness-card p { font-size:12px; color:#888; margin-top:4px; }
-
-    /* Modal Styles */
+    .wellness-card .icon {
+      font-size:24px; margin-bottom:6px;
+    }
+    .wellness-card h4 {
+      font-size:12px; color:#1a1a2e;
+    }
+    .wellness-card p {
+      font-size:11px; color:#888; margin-top:3px;
+    }
+    /* Modals */
     .modal-overlay {
-      display:none; position:fixed; top:0; left:0;
-      width:100%; height:100%;
+      display:none; position:fixed;
+      top:0; left:0; width:100%; height:100%;
       background:rgba(0,0,0,0.5);
-      z-index:1000;
-      align-items:center; justify-content:center;
+      z-index:1000; align-items:center;
+      justify-content:center; padding:16px;
     }
     .modal-overlay.active { display:flex; }
     .modal {
       background:white; border-radius:16px;
-      padding:32px; max-width:500px; width:90%;
-      position:relative;
+      padding:22px; width:100%; max-width:480px;
+      position:relative; max-height:85vh;
+      overflow-y:auto;
     }
     .modal h3 {
-      font-size:20px; color:#1a1a2e;
-      margin-bottom:16px;
+      font-size:17px; color:#1a1a2e;
+      margin-bottom:14px;
+    }
+    .close-btn {
+      position:absolute; top:14px; right:14px;
+      background:#f0f2f5; border:none;
+      width:30px; height:30px; border-radius:50%;
+      cursor:pointer; font-size:15px;
     }
     .modal p {
       font-size:14px; color:#555;
-      line-height:1.8; margin-bottom:12px;
-    }
-    .modal .close-btn {
-      position:absolute; top:16px; right:16px;
-      background:#f0f2f5; border:none;
-      width:32px; height:32px; border-radius:50%;
-      cursor:pointer; font-size:16px;
+      line-height:1.7; margin-bottom:10px;
     }
     .modal ul {
-      padding-left:20px; margin-bottom:12px;
+      padding-left:18px; margin-bottom:10px;
     }
     .modal ul li {
-      font-size:14px; color:#555;
-      line-height:2;
+      font-size:13px; color:#555; line-height:2;
     }
     .tip-box {
-      background:#f0f4ff; border-left:4px solid #0f3460;
-      padding:12px 16px; border-radius:8px;
-      margin-top:12px;
+      background:#f0f4ff;
+      border-left:4px solid #0f3460;
+      padding:10px 14px; border-radius:8px;
+      margin-top:10px;
     }
-    .tip-box p { color:#0f3460; margin:0; font-weight:600; }
+    .tip-box p {
+      color:#0f3460; margin:0;
+      font-weight:600; font-size:13px;
+    }
   </style>
 </head>
 <body>
@@ -130,48 +172,51 @@
 <!-- Wellness Modals -->
 <div class="modal-overlay" id="modal-breathing">
   <div class="modal">
-    <button class="close-btn" onclick="closeModal('breathing')">✕</button>
+    <button class="close-btn"
+            onclick="closeModal('breathing')">✕</button>
     <h3>🫁 4-7-8 Breathing Exercise</h3>
-    <p>This technique helps calm your nervous system and reduce stress instantly.</p>
+    <p>Calm your nervous system and reduce stress instantly.</p>
     <ul>
-      <li>👃 <strong>Inhale</strong> through nose for <strong>4 seconds</strong></li>
-      <li>🫁 <strong>Hold</strong> your breath for <strong>7 seconds</strong></li>
-      <li>💨 <strong>Exhale</strong> through mouth for <strong>8 seconds</strong></li>
-      <li>🔄 Repeat this cycle <strong>4 times</strong></li>
+      <li>👃 <strong>Inhale</strong> through nose — <strong>4 seconds</strong></li>
+      <li>🫁 <strong>Hold</strong> your breath — <strong>7 seconds</strong></li>
+      <li>💨 <strong>Exhale</strong> through mouth — <strong>8 seconds</strong></li>
+      <li>🔄 Repeat <strong>4 times</strong></li>
     </ul>
     <div class="tip-box">
-      <p>💡 Do this every morning and before exams to stay calm!</p>
+      <p>💡 Do this every morning and before exams!</p>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="modal-stress">
   <div class="modal">
-    <button class="close-btn" onclick="closeModal('stress')">✕</button>
+    <button class="close-btn"
+            onclick="closeModal('stress')">✕</button>
     <h3>💆 Stress Management Tips</h3>
     <ul>
-      <li>📚 Break study sessions into 25-minute blocks</li>
-      <li>🚶 Take a 10-minute walk between study sessions</li>
-      <li>💧 Drink plenty of water throughout the day</li>
-      <li>😴 Get at least 7-8 hours of sleep every night</li>
-      <li>📵 Avoid social media 1 hour before sleeping</li>
+      <li>📚 Study in 25-minute blocks</li>
+      <li>🚶 Take 10-minute walks between sessions</li>
+      <li>💧 Drink plenty of water daily</li>
+      <li>😴 Get 7-8 hours of sleep every night</li>
+      <li>📵 No screens 1 hour before sleeping</li>
       <li>✍️ Write down worries to clear your mind</li>
       <li>🎵 Listen to calming music while studying</li>
     </ul>
     <div class="tip-box">
-      <p>💡 Small consistent habits beat last-minute cramming!</p>
+      <p>💡 Small habits beat last-minute cramming!</p>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="modal-counselor">
   <div class="modal">
-    <button class="close-btn" onclick="closeModal('counselor')">✕</button>
+    <button class="close-btn"
+            onclick="closeModal('counselor')">✕</button>
     <h3>🤝 Talk to a Counselor</h3>
-    <p>You are not alone. Our school counselors are here to help you confidentially.</p>
+    <p>You are not alone. Our counselors are here to help confidentially.</p>
     <ul>
       <li>🏫 <strong>School Counselor:</strong> Room 12, Block B</li>
-      <li>⏰ <strong>Available:</strong> Monday to Friday, 9AM - 4PM</li>
+      <li>⏰ <strong>Available:</strong> Mon-Fri, 9AM-4PM</li>
       <li>📧 <strong>Email:</strong> counselor@school.com</li>
       <li>📞 <strong>Phone:</strong> 9800012345</li>
     </ul>
@@ -183,46 +228,53 @@
 
 <div class="modal-overlay" id="modal-selfcare">
   <div class="modal">
-    <button class="close-btn" onclick="closeModal('selfcare')">✕</button>
+    <button class="close-btn"
+            onclick="closeModal('selfcare')">✕</button>
     <h3>🌿 Self-Care Daily Guide</h3>
     <ul>
       <li>☀️ <strong>Morning:</strong> Wake up same time daily</li>
-      <li>🧘 <strong>Morning:</strong> 5 mins meditation or stretching</li>
-      <li>🍎 <strong>Breakfast:</strong> Never skip your first meal</li>
+      <li>🧘 <strong>Morning:</strong> 5 mins meditation</li>
+      <li>🍎 <strong>Breakfast:</strong> Never skip first meal</li>
       <li>📖 <strong>Study:</strong> Use Pomodoro technique</li>
-      <li>🌳 <strong>Evening:</strong> Spend 20 mins outdoors</li>
-      <li>📵 <strong>Night:</strong> No screens 1 hour before bed</li>
+      <li>🌳 <strong>Evening:</strong> 20 mins outdoors</li>
+      <li>📵 <strong>Night:</strong> No screens before bed</li>
       <li>😴 <strong>Sleep:</strong> 7-8 hours minimum</li>
     </ul>
     <div class="tip-box">
-      <p>💡 Your health is your biggest asset. Protect it!</p>
+      <p>💡 Your health is your biggest asset!</p>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="modal-motivation">
   <div class="modal">
-    <button class="close-btn" onclick="closeModal('motivation')">✕</button>
+    <button class="close-btn"
+            onclick="closeModal('motivation')">✕</button>
     <h3>⭐ Motivation Corner</h3>
-    <p style="font-size:18px;font-style:italic;color:#0f3460;text-align:center;margin:16px 0">
-      "Success is not final, failure is not fatal: It is the courage to continue that counts."
+    <p style="font-size:16px;font-style:italic;
+              color:#0f3460;text-align:center;
+              margin:14px 0">
+      "Success is not final, failure is not fatal:
+      It is the courage to continue that counts."
     </p>
-    <p style="text-align:center;color:#888">— Winston Churchill</p>
-    <ul style="margin-top:16px">
+    <p style="text-align:center;color:#888;
+              font-size:13px">— Winston Churchill</p>
+    <ul style="margin-top:14px">
       <li>🌟 Every expert was once a beginner</li>
-      <li>💪 Your hard work today is your success tomorrow</li>
+      <li>💪 Hard work today = success tomorrow</li>
       <li>🎯 Focus on progress, not perfection</li>
-      <li>🚀 Believe in yourself — you are capable!</li>
+      <li>🚀 Believe in yourself!</li>
     </ul>
     <div class="tip-box">
-      <p>💡 Read one motivational quote every morning!</p>
+      <p>💡 Read one quote every morning!</p>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="modal-helpline">
   <div class="modal">
-    <button class="close-btn" onclick="closeModal('helpline')">✕</button>
+    <button class="close-btn"
+            onclick="closeModal('helpline')">✕</button>
     <h3>📞 Emergency Helpline Numbers</h3>
     <ul>
       <li>🆘 <strong>iCall (India):</strong> 9152987821</li>
@@ -230,7 +282,6 @@
       <li>🏥 <strong>NIMHANS:</strong> 080-46110007</li>
       <li>👨‍👩‍👧 <strong>Childline:</strong> 1098</li>
       <li>🚨 <strong>Emergency:</strong> 112</li>
-      <li>📧 <strong>School:</strong> help@school.com</li>
     </ul>
     <div class="tip-box">
       <p>💡 It is okay to ask for help. You are brave!</p>
@@ -239,13 +290,11 @@
 </div>
 
 <nav class="navbar">
-  <h2>👨‍🎓 Student Dashboard — EduTrack</h2>
-  <div style="display:flex;gap:10px">
-    <button onclick="window.location.href='profile-settings.html'"
-            style="background:rgba(255,255,255,0.2);
-                   color:white; border:none;
-                   padding:8px 16px; border-radius:6px;
-                   cursor:pointer; font-size:14px">
+  <h2 id="navbar-title">👨‍🎓 Student Dashboard — EduTrack</h2>
+  <div class="navbar-btns">
+    <button class="btn-settings"
+            onclick="window.location.href=
+                     'profile-settings.html'">
       ⚙️ Settings
     </button>
     <button class="btn-logout" onclick="logout()">
@@ -255,17 +304,20 @@
 </nav>
 
 <div class="container">
+
+  <!-- Stats -->
   <div class="stats-grid">
     <div class="stat-card">
       <div class="number" id="att-pct">—</div>
       <div class="label">Attendance %</div>
       <div class="progress-bg">
-        <div class="progress-fill" id="att-bar" style="width:0%"></div>
+        <div class="progress-fill" id="att-bar"
+             style="width:0%"></div>
       </div>
     </div>
     <div class="stat-card">
       <div class="number" id="avg-marks">—</div>
-      <div class="label">Average Marks %</div>
+      <div class="label">Avg Marks %</div>
       <div class="progress-bg">
         <div class="progress-fill" id="marks-bar"
              style="width:0%;background:#27ae60"></div>
@@ -273,10 +325,11 @@
     </div>
     <div class="stat-card">
       <div class="number" id="risk-display">—</div>
-      <div class="label">My Risk Level</div>
+      <div class="label">Risk Level</div>
     </div>
   </div>
 
+  <!-- Chart + Marks -->
   <div class="grid-2">
     <div class="section-card">
       <h3>📈 Performance Chart</h3>
@@ -284,17 +337,41 @@
     </div>
     <div class="section-card">
       <h3>📝 Subject-wise Marks</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Subject</th><th>Exam</th>
+              <th>Score</th><th>%</th>
+            </tr>
+          </thead>
+          <tbody id="marks-tbody">
+            <tr>
+              <td colspan="4"
+                  style="text-align:center;
+                         color:#999;padding:20px">
+                Loading...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Attendance -->
+  <div class="section-card">
+    <h3>📋 My Attendance</h3>
+    <div class="table-wrapper">
       <table>
         <thead>
-          <tr>
-            <th>Subject</th><th>Exam</th>
-            <th>Score</th><th>%</th>
-          </tr>
+          <tr><th>Date</th><th>Status</th></tr>
         </thead>
-        <tbody id="marks-tbody">
+        <tbody id="att-tbody">
           <tr>
-            <td colspan="4"
-                style="text-align:center;color:#999">
+            <td colspan="2"
+                style="text-align:center;
+                       color:#999;padding:20px">
               Loading...
             </td>
           </tr>
@@ -303,82 +380,67 @@
     </div>
   </div>
 
-  <div class="section-card">
-    <h3>📋 My Attendance</h3>
-    <table>
-      <thead>
-        <tr><th>Date</th><th>Status</th></tr>
-      </thead>
-      <tbody id="att-tbody">
-        <tr>
-          <td colspan="2"
-              style="text-align:center;color:#999">
-            Loading...
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
+  <!-- Wellness -->
   <div class="section-card">
     <h3>🧠 Well-being & Mental Health</h3>
     <div class="wellness-grid">
       <div class="wellness-card"
-           onclick="openModal('breathing', 'breathing')">
+           onclick="openModal('breathing','breathing')">
         <div class="icon">🫁</div>
         <h4>Breathing Exercise</h4>
-        <p>4-7-8 breathing technique</p>
+        <p>4-7-8 technique</p>
       </div>
       <div class="wellness-card"
-           onclick="openModal('stress', 'stress_tips')">
+           onclick="openModal('stress','stress_tips')">
         <div class="icon">💆</div>
         <h4>Stress Tips</h4>
-        <p>Handle academic pressure</p>
+        <p>Handle pressure</p>
       </div>
       <div class="wellness-card"
-           onclick="openModal('counselor', 'counselor')">
+           onclick="openModal('counselor','counselor')">
         <div class="icon">🤝</div>
-        <h4>Talk to Counselor</h4>
+        <h4>Counselor</h4>
         <p>Confidential support</p>
       </div>
       <div class="wellness-card"
-           onclick="openModal('selfcare', 'self_care')">
+           onclick="openModal('selfcare','self_care')">
         <div class="icon">🌿</div>
-        <h4>Self-Care Guide</h4>
-        <p>Daily well-being habits</p>
+        <h4>Self-Care</h4>
+        <p>Daily habits</p>
       </div>
       <div class="wellness-card"
-           onclick="openModal('motivation', 'motivation')">
+           onclick="openModal('motivation','motivation')">
         <div class="icon">⭐</div>
-        <h4>Motivation Corner</h4>
+        <h4>Motivation</h4>
         <p>Inspiring quotes</p>
       </div>
       <div class="wellness-card"
-           onclick="openModal('helpline', 'helpline')">
+           onclick="openModal('helpline','helpline')">
         <div class="icon">📞</div>
         <h4>Helpline</h4>
         <p>Emergency contacts</p>
       </div>
     </div>
   </div>
+
 </div>
 
 <script>
   const TOKEN = localStorage.getItem('jwt_token');
-  const BASE = 'https://student-awareness-backend.onrender.com/api/v1';
   const ROLE = localStorage.getItem('user_role');
-  // Route protection
+  const BASE =
+    'https://student-awareness-backend.onrender.com/api/v1';
+
   if (!TOKEN || ROLE !== 'student') {
-  window.location.href = 'index.html';
+    window.location.href = 'index.html';
   }
 
-  // Get correct student_id from localStorage
   let STUDENT_ID = localStorage.getItem('student_id');
-  let USER_NAME = localStorage.getItem('user_name') || 'Student';
+  let USER_NAME =
+    localStorage.getItem('user_name') || 'Student';
 
-  // Show student name in navbar
-  document.querySelector('.navbar h2').textContent =
-    `👨‍🎓 Welcome, ${USER_NAME} — EduTrack`;
+  document.getElementById('navbar-title').textContent =
+    `👨‍🎓 ${USER_NAME} — EduTrack`;
 
   function logout() {
     localStorage.clear();
@@ -417,16 +479,12 @@
       const res = await fetch(BASE + url, opts);
       return res.json();
     } catch(e) {
-      console.error('API Error:', e);
       return { error: 'Connection failed' };
     }
   }
 
   async function getStudentId() {
-    // If student_id already in localStorage use it
     if (STUDENT_ID) return STUDENT_ID;
-
-    // Otherwise fetch from /auth/me
     try {
       const meData = await apiFetch('/auth/me');
       if (meData.student_id) {
@@ -434,28 +492,21 @@
         localStorage.setItem('student_id', STUDENT_ID);
         return STUDENT_ID;
       }
-    } catch(e) {
-      console.error('Error getting student ID:', e);
-    }
+    } catch(e) {}
     return null;
   }
 
   async function loadDashboard() {
     const id = await getStudentId();
-
     if (!id) {
-      document.getElementById('att-pct').textContent = 'N/A';
-      document.getElementById('avg-marks').textContent = 'N/A';
-      document.getElementById('risk-display').innerHTML =
-        '<span class="badge bg-warning">⚠️ No Data</span>';
-      document.getElementById('marks-tbody').innerHTML =
-        '<tr><td colspan="4" style="text-align:center;' +
-        'color:#999">No student record found</td></tr>';
+      document.getElementById('att-pct').textContent =
+        'N/A';
+      document.getElementById('avg-marks').textContent =
+        'N/A';
       return;
     }
 
     try {
-      // Load all data together
       const [report, marksData, attData] =
         await Promise.all([
           apiFetch(`/report/${id}`),
@@ -463,7 +514,6 @@
           apiFetch(`/attendance/${id}`)
         ]);
 
-      // Update stats
       document.getElementById('att-pct').textContent =
         (report.attendance_percentage || 0) + '%';
       document.getElementById('avg-marks').textContent =
@@ -473,27 +523,24 @@
       document.getElementById('marks-bar').style.width =
         (report.average_marks_percentage || 0) + '%';
 
-      // Risk badge
       try {
-        const risk = await apiFetch(
-          `/predict-risk/${id}`, 'POST'
-        );
+        const risk =
+          await apiFetch(`/predict-risk/${id}`, 'POST');
         const badges = {
           HIGH:
-            '<span class="badge bg-danger">🔴 HIGH RISK</span>',
+            '<span class="badge bg-danger">🔴 HIGH</span>',
           MEDIUM:
-            '<span class="badge bg-warning">🟡 MEDIUM RISK</span>',
+            '<span class="badge bg-warning">🟡 MEDIUM</span>',
           LOW:
-            '<span class="badge bg-success">🟢 LOW RISK</span>'
+            '<span class="badge bg-success">🟢 LOW</span>'
         };
         document.getElementById('risk-display').innerHTML =
           badges[risk.risk_level] || badges['LOW'];
       } catch(e) {
         document.getElementById('risk-display').innerHTML =
-          '<span class="badge bg-success">🟢 LOW RISK</span>';
+          '<span class="badge bg-success">🟢 LOW</span>';
       }
 
-      // Marks table and chart
       const tbody =
         document.getElementById('marks-tbody');
       tbody.innerHTML = '';
@@ -522,7 +569,6 @@
           tbody.appendChild(tr);
         });
 
-        // Render chart
         new Chart(
           document.getElementById('marksChart'), {
           type: 'bar',
@@ -540,37 +586,36 @@
           options: {
             responsive: true,
             scales: {
-              y: { beginAtZero: true, max: 100 }
+              y: { beginAtZero:true, max:100 }
             },
-            plugins: { legend: { display: false } }
+            plugins: { legend: { display:false } }
           }
         });
       } else {
         tbody.innerHTML =
           '<tr><td colspan="4" style="text-align:' +
           'center;color:#999;padding:20px">' +
-          '📝 No marks added yet</td></tr>';
+          'No marks yet</td></tr>';
       }
 
-      // Attendance table
       const attBody =
         document.getElementById('att-tbody');
       attBody.innerHTML = '';
 
       if (attData.records && attData.records.length > 0) {
-        // Show attendance summary
         attBody.innerHTML +=
           `<tr style="background:#f8f9fa">
-            <td colspan="2" style="padding:10px 14px;
-              font-size:13px;color:#555">
-              📊 Total: ${attData.total} days |
+            <td colspan="2"
+                style="padding:8px 12px;
+                       font-size:12px;color:#555">
+              📊 Total: ${attData.total} |
               ✅ Present: ${attData.present} |
               ❌ Absent: ${attData.absent} |
-              📈 Percentage: ${attData.percentage}%
+              📈 ${attData.percentage}%
             </td>
           </tr>`;
 
-        attData.records.slice(0, 15).forEach(r => {
+        attData.records.slice(0,15).forEach(r => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td>${r.date}</td>
@@ -588,11 +633,11 @@
         attBody.innerHTML =
           '<tr><td colspan="2" style="text-align:' +
           'center;color:#999;padding:20px">' +
-          '📋 No attendance records yet</td></tr>';
+          'No attendance records yet</td></tr>';
       }
 
     } catch(err) {
-      console.error('Dashboard load error:', err);
+      console.error('Dashboard error:', err);
     }
   }
 
@@ -605,12 +650,9 @@
           resource_type: type
         });
       }
-    } catch(e) {
-      console.log('Wellness log:', e);
-    }
+    } catch(e) {}
   }
 
-  // Load dashboard on page open
   loadDashboard();
 </script>
 </body>

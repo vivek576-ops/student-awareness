@@ -8,84 +8,122 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'Segoe UI',sans-serif; background:#f0f2f5; }
     .navbar {
-      background: linear-gradient(135deg, #856404, #a07800);
-      color: white;
-      padding: 16px 32px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background:linear-gradient(135deg,#856404,#a07800);
+      color:white; padding:14px 16px;
+      display:flex; justify-content:space-between;
+      align-items:center; flex-wrap:wrap; gap:8px;
     }
-    .navbar h2 { font-size:20px; }
+    .navbar h2 { font-size:16px; }
+    .navbar-btns { display:flex; gap:8px; }
+    .btn-settings {
+      background:rgba(255,255,255,0.2);
+      color:white; border:none;
+      padding:7px 12px; border-radius:6px;
+      cursor:pointer; font-size:12px;
+    }
     .btn-logout {
       background:#e74c3c; color:white; border:none;
-      padding:8px 20px; border-radius:6px; cursor:pointer;
+      padding:7px 14px; border-radius:6px;
+      cursor:pointer; font-size:12px;
     }
-    .container { padding:24px 32px; }
+    .container { padding:14px; }
     .stats-grid {
-      display:grid; grid-template-columns:repeat(4,1fr);
-      gap:16px; margin-bottom:24px;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px; margin-bottom:18px;
+    }
+    @media(max-width:600px) {
+      .stats-grid { grid-template-columns:1fr 1fr; }
     }
     .stat-card {
-      background:white; border-radius:12px; padding:20px;
-      text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.08);
+      background:white; border-radius:12px;
+      padding:14px; text-align:center;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
     }
     .stat-card .number {
-      font-size:32px; font-weight:700; color:#302b63;
+      font-size:26px; font-weight:700; color:#302b63;
     }
-    .stat-card .label { font-size:13px; color:#888; margin-top:4px; }
-    .section-card {
-      background:white; border-radius:12px; padding:24px;
-      margin-bottom:24px; box-shadow:0 2px 8px rgba(0,0,0,0.08);
-    }
-    .section-card h3 {
-      font-size:17px; color:#1a1a2e; margin-bottom:16px;
-      border-bottom:2px solid #f0f2f5; padding-bottom:10px;
+    .stat-card .label {
+      font-size:11px; color:#888; margin-top:3px;
     }
     .tabs {
-      display:flex; gap:8px; margin-bottom:24px;
+      display:flex; gap:6px; margin-bottom:18px;
+      flex-wrap:wrap;
     }
     .tab {
-      padding:10px 20px; border:2px solid #e0e0e0;
-      border-radius:8px; cursor:pointer; font-size:14px;
-      background:white; font-weight:600; color:#666;
+      padding:9px 14px; border:2px solid #e0e0e0;
+      border-radius:8px; cursor:pointer;
+      font-size:12px; background:white;
+      font-weight:600; color:#666;
     }
     .tab.active {
-      background:#856404; color:white; border-color:#856404;
+      background:#856404; color:white;
+      border-color:#856404;
     }
     .tab-content { display:none; }
     .tab-content.active { display:block; }
-    table { width:100%; border-collapse:collapse; font-size:14px; }
+    .section-card {
+      background:white; border-radius:12px;
+      padding:18px; margin-bottom:18px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    }
+    .section-card h3 {
+      font-size:15px; color:#1a1a2e;
+      margin-bottom:14px;
+      border-bottom:2px solid #f0f2f5;
+      padding-bottom:8px;
+    }
+    .table-wrapper {
+      width:100%; overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+    }
+    table {
+      width:100%; border-collapse:collapse;
+      font-size:13px; min-width:500px;
+    }
     th {
       background:#302b63; color:white;
-      padding:12px 16px; text-align:left;
+      padding:10px 12px; text-align:left;
+      white-space:nowrap;
     }
-    td { padding:12px 16px; border-bottom:1px solid #f0f2f5; }
+    td {
+      padding:10px 12px;
+      border-bottom:1px solid #f0f2f5;
+      vertical-align:middle;
+    }
     tr:hover td { background:#f8f9fa; }
     .badge {
-      padding:4px 12px; border-radius:20px;
-      font-size:12px; font-weight:600;
+      padding:3px 10px; border-radius:20px;
+      font-size:11px; font-weight:600;
+      white-space:nowrap;
     }
     .bg-success { background:#d4edda; color:#155724; }
     .bg-warning { background:#fff3cd; color:#856404; }
     .bg-danger  { background:#ffe0e0; color:#c0392b; }
     .btn-approve {
       background:#27ae60; color:white; border:none;
-      padding:6px 14px; border-radius:6px;
-      cursor:pointer; font-size:12px;
+      padding:5px 10px; border-radius:5px;
+      cursor:pointer; font-size:11px;
+      font-weight:600; margin-right:4px;
     }
-    .btn-approve:hover { background:#1e8449; }
+    .btn-delete {
+      background:#e74c3c; color:white; border:none;
+      padding:5px 10px; border-radius:5px;
+      cursor:pointer; font-size:11px; font-weight:600;
+    }
+    .empty-state {
+      text-align:center; color:#999;
+      padding:24px; font-size:13px;
+    }
   </style>
 </head>
 <body>
-
 <nav class="navbar">
   <h2>👑 Principal Dashboard — EduTrack</h2>
-  <div style="display:flex;gap:10px">
-    <button onclick="window.location.href='profile-settings.html'"
-            style="background:rgba(255,255,255,0.2);
-                   color:white; border:none;
-                   padding:8px 16px; border-radius:6px;
-                   cursor:pointer; font-size:14px">
+  <div class="navbar-btns">
+    <button class="btn-settings"
+            onclick="window.location.href=
+                     'profile-settings.html'">
       ⚙️ Settings
     </button>
     <button class="btn-logout" onclick="logout()">
@@ -118,16 +156,16 @@
 
   <div class="tabs">
     <button class="tab active"
-            onclick="switchTab('approvals', this)">
-      ⏳ Pending Approvals
+            onclick="switchTab('approvals',this)">
+      ⏳ Pending
     </button>
     <button class="tab"
-            onclick="switchTab('teachers', this)">
-      👨‍🏫 All Teachers
+            onclick="switchTab('teachers',this)">
+      👨‍🏫 Teachers
     </button>
     <button class="tab"
-            onclick="switchTab('students', this)">
-      👨‍🎓 All Students
+            onclick="switchTab('students',this)">
+      👨‍🎓 Students
     </button>
   </div>
 
@@ -135,23 +173,24 @@
   <div class="tab-content active" id="tab-approvals">
     <div class="section-card">
       <h3>⏳ Teachers Pending Approval</h3>
-      <table>
-        <thead>
-        <tr>
-          <th>Name</th><th>Email</th>
-          <th>Specialization</th><th>Username</th>
-          <th>Approve</th><th>Delete</th>
-        </tr>
-        </thead>
-        <tbody id="pending-tbody">
-          <tr>
-            <td colspan="6"
-                style="text-align:center;color:#999">
-              Loading...
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th><th>Email</th>
+              <th>Subject</th><th>Username</th>
+              <th>Approve</th><th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="pending-tbody">
+            <tr>
+              <td colspan="6" class="empty-state">
+                Loading...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -159,22 +198,24 @@
   <div class="tab-content" id="tab-teachers">
     <div class="section-card">
       <h3>👨‍🏫 All Teachers</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th><th>Email</th>
-            <th>Specialization</th><th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="teachers-tbody">
-          <tr>
-            <td colspan="4"
-                style="text-align:center;color:#999">
-              Loading...
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th><th>Email</th>
+              <th>Subject</th><th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="teachers-tbody">
+            <tr>
+              <td colspan="5" class="empty-state">
+                Loading...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -182,33 +223,34 @@
   <div class="tab-content" id="tab-students">
     <div class="section-card">
       <h3>👨‍🎓 All Students</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Roll No</th><th>Name</th>
-            <th>Class</th><th>Attendance %</th>
-          </tr>
-        </thead>
-        <tbody id="students-tbody">
-          <tr>
-            <td colspan="4"
-                style="text-align:center;color:#999">
-              Loading...
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Roll No</th><th>Name</th>
+              <th>Class</th><th>Attendance %</th>
+            </tr>
+          </thead>
+          <tbody id="students-tbody">
+            <tr>
+              <td colspan="4" class="empty-state">
+                Loading...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
 
-
 <script>
   const TOKEN = localStorage.getItem('jwt_token');
-  const BASE = 'https://student-awareness-backend.onrender.com/api/v1';
   const ROLE = localStorage.getItem('user_role');
+  const BASE =
+    'https://student-awareness-backend.onrender.com/api/v1';
   if (!TOKEN || ROLE !== 'principal') {
-  window.location.href = 'index.html';
+    window.location.href = 'index.html';
   }
 
   function logout() {
@@ -222,7 +264,8 @@
     document.querySelectorAll('.tab-content')
       .forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('tab-' + name).classList.add('active');
+    document.getElementById('tab-' + name)
+      .classList.add('active');
   }
 
   async function apiFetch(url, method='GET', body=null) {
@@ -234,47 +277,52 @@
       }
     };
     if (body) opts.body = JSON.stringify(body);
-    const res = await fetch(BASE + url, opts);
-    return res.json();
+    try {
+      const res = await fetch(BASE + url, opts);
+      return res.json();
+    } catch(e) {
+      return { error: 'Connection failed' };
+    }
   }
 
   async function loadPending() {
-  const data = await apiFetch('/principal/pending-teachers');
-  const tbody = document.getElementById('pending-tbody');
-  tbody.innerHTML = '';
-  document.getElementById('pending-count').textContent =
-    data.pending.length;
+    const data =
+      await apiFetch('/principal/pending-teachers');
+    const tbody =
+      document.getElementById('pending-tbody');
+    tbody.innerHTML = '';
+    document.getElementById('pending-count').textContent =
+      data.pending ? data.pending.length : 0;
 
-  if (data.pending.length === 0) {
-    tbody.innerHTML =
-      '<tr><td colspan="6" style="text-align:center;' +
-      'color:#999">No pending approvals</td></tr>';
-    return;
+    if (!data.pending || data.pending.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="6" class="empty-state">' +
+        'No pending approvals</td></tr>';
+      return;
+    }
+    data.pending.forEach(t => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${t.name}</td>
+        <td>${t.email}</td>
+        <td>${t.subject_specialization || '—'}</td>
+        <td>${t.username}</td>
+        <td>
+          <button class="btn-approve"
+                  onclick="approveTeacher(${t.id},this)">
+            ✅ Approve
+          </button>
+        </td>
+        <td>
+          <button class="btn-delete"
+                  onclick="deleteTeacher(${t.id})">
+            🗑️ Delete
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
   }
-  data.pending.forEach(t => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${t.name}</td>
-      <td>${t.email}</td>
-      <td>${t.subject_specialization || '—'}</td>
-      <td>${t.username}</td>
-      <td>
-        <button class="btn-approve"
-                onclick="approveTeacher(${t.id}, this)">
-          ✅ Approve
-        </button>
-      </td>
-      <td>
-        <button class="btn-approve"
-                style="background:#e74c3c"
-                onclick="deleteTeacher(${t.id})">
-          🗑️ Delete
-        </button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
 
   async function approveTeacher(userId, btn) {
     await apiFetch(
@@ -284,64 +332,84 @@
     btn.disabled = true;
     btn.style.background = '#888';
     loadPending();
+    loadTeachers();
+  }
+
+  async function deleteTeacher(userId) {
+    if (!confirm(
+      'Are you sure you want to delete this teacher?'
+    )) return;
+
+    const res = await apiFetch(
+      `/principal/delete-teacher/${userId}`, 'DELETE'
+    );
+
+    if (res.message) {
+      alert('✅ Teacher deleted successfully!');
+      loadTeachers();
+      loadPending();
+    } else {
+      alert('❌ Failed: ' +
+        (res.error || 'Unknown error'));
+    }
   }
 
   async function loadTeachers() {
-  const data = await apiFetch('/principal/all-teachers');
-  const tbody = document.getElementById('teachers-tbody');
-  tbody.innerHTML = '';
-  document.getElementById('total-teachers').textContent =
-    data.teachers.length;
-  data.teachers.forEach(t => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${t.name}</td>
-      <td>${t.email}</td>
-      <td>${t.subject_specialization || '—'}</td>
-      <td>
-        <span class="badge ${t.is_approved ?
-          'bg-success' : 'bg-warning'}">
-          ${t.is_approved ? '✅ Active' : '⏳ Pending'}
-        </span>
-      </td>
-      <td>
-        <button class="btn-approve"
-                onclick="deleteTeacher(${t.id})"
-                style="background:#e74c3c">
-          🗑️ Delete
-        </button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+    const data =
+      await apiFetch('/principal/all-teachers');
+    const tbody =
+      document.getElementById('teachers-tbody');
+    tbody.innerHTML = '';
+    document.getElementById('total-teachers').textContent =
+      data.teachers ? data.teachers.length : 0;
 
-async function deleteTeacher(userId) {
-  if (!confirm(
-    'Are you sure you want to delete this teacher? ' +
-    'This cannot be undone!'
-  )) return;
+    if (!data.teachers || data.teachers.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="5" class="empty-state">' +
+        'No teachers found</td></tr>';
+      return;
+    }
 
-  const res = await apiFetch(
-    `/principal/delete-teacher/${userId}`, 'DELETE'
-  );
-
-  if (res.message) {
-    alert('✅ Teacher deleted successfully!');
-    loadTeachers();
-    loadPending();
-  } else {
-    alert('❌ Failed: ' + (res.error || 'Unknown error'));
+    data.teachers.forEach(t => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${t.name}</td>
+        <td>${t.email}</td>
+        <td>${t.subject_specialization || '—'}</td>
+        <td>
+          <span class="badge ${t.is_approved ?
+            'bg-success' : 'bg-warning'}">
+            ${t.is_approved ? '✅ Active' : '⏳ Pending'}
+          </span>
+        </td>
+        <td>
+          <button class="btn-delete"
+                  onclick="deleteTeacher(${t.id})">
+            🗑️ Delete
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
   }
-}
 
   async function loadStudents() {
-    const data = await apiFetch('/principal/all-students');
-    const tbody = document.getElementById('students-tbody');
+    const data =
+      await apiFetch('/principal/all-students');
+    const tbody =
+      document.getElementById('students-tbody');
     tbody.innerHTML = '';
     document.getElementById('total-students').textContent =
-      data.students.length;
+      data.students ? data.students.length : 0;
+
     let atRisk = 0;
+    if (!data.students || data.students.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="4" class="empty-state">' +
+        'No students found</td></tr>';
+      return;
+    }
+
     data.students.forEach(s => {
       if (s.attendance_pct < 75) atRisk++;
       const tr = document.createElement('tr');
@@ -358,7 +426,8 @@ async function deleteTeacher(userId) {
       `;
       tbody.appendChild(tr);
     });
-    document.getElementById('at-risk-count').textContent = atRisk;
+    document.getElementById('at-risk-count')
+      .textContent = atRisk;
   }
 
   loadPending();
