@@ -468,56 +468,52 @@ def notify_parent():
 # ─── AI RISK ROUTE ───────────────────────────────────────────────
 
 @app.route('/api/v1/predict-risk/<int:student_id>', methods=['POST'])
-@jwt_required()
+@teacher_required
 def predict_risk(student_id):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute(
-                "SELECT status FROM attendance WHERE student_id=%s",
-                (student_id,)
-            )
+            # 1. Pull current calculated historical data vectors
+            cursor.execute("SELECT status FROM attendance WHERE student_id=%s", (student_id,))
             att = cursor.fetchall()
             total = len(att)
-            present = sum(
-                1 for a in att if a['status'] == 'Present'
-            )
-            att_pct = round(
-                (present / total * 100), 2
-            ) if total > 0 else 0
-            cursor.execute(
-                """SELECT marks_obtained, max_marks
-                   FROM marks WHERE student_id=%s
-                   ORDER BY id DESC LIMIT 3""",
-                (student_id,)
-            )
-            marks = cursor.fetchall()
-            scores = [
-                m['marks_obtained'] / m['max_marks'] * 100
-                for m in marks
-            ]
-            avg_marks = round(
-                sum(scores) / len(scores), 2
-            ) if scores else 0
-            trend = round(
-                scores[0] - scores[-1], 2
-            ) if len(scores) >= 2 else 0
+            present = sum(1 for a in att if a['status'] == 'Present')
+            att_pct = round((present / total * 100), 2) if total > 0 else 0
 
-            risk_level, confidence = analyze_risk(
-                att_pct, avg_marks, trend
-            )
-            cursor.execute(
-                """INSERT INTO risk_flags
-                   (student_id, risk_level, confidence_score)
-                   VALUES (%s, %s, %s)""",
-                (student_id, risk_level, confidence)
-            )
-        conn.commit()
-        return jsonify({
-            'student_id': student_id,
-            'risk_level': risk_level,
-            'confidence': confidence
-        })
+            cursor.execute("SELECT marks_obtained, max_marks FROM marks WHERE student_id=%s ORDER BY id DESC LIMIT 3", (student_id,))
+            marks = cursor.fetchall()
+            scores = [m['marks_obtained'] / m['max_marks'] * 100 for m in marks]
+            avg_marks = round(sum(scores) / len(scores), 2) if scores else 0
+            trend = round(scores[0] - scores[-1], 2) if len(scores) >= 2 else 0
+
+            # 2. Call our updated split analytics engine
+            from risk_analyzer import analyze_student_metrics, get_universal_guidance
+            risk_profiles = analyze_student_metrics(att_pct, avg_marks, trend)
+            guidance = get_universal_guidance(risk_profiles, avg_marks, trend)
+
+            # 3. Store both metric channels inside our newly updated schema
+            cursor.execute("""
+                INSERT INTO risk_flags 
+                (student_id, attendance_risk_level, attendance_risk_percentage, academic_risk_level, academic_risk_percentage) 
+                VALUES (%s, %s, %s, %s, %s)
+            """, (
+                student_id, 
+                risk_profiles["attendance"]["level"], risk_profiles["attendance"]["percentage"],
+                risk_profiles["academic"]["level"], risk_profiles["academic"]["percentage"]
+            ))
+            conn.commit()
+
+            # 4. Expose the clean parameters out to the dashboard UI
+            return jsonify({
+                'student_id': student_id,
+                'raw_metrics': {
+                    'attendance_percentage': att_pct, 
+                    'average_marks': avg_marks,
+                    'marks_trend': trend
+                },
+                'risk_analysis': risk_profiles,
+                'guidance': guidance
+            })
     finally:
         conn.close()
 
