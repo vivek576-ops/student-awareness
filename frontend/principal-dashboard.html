@@ -420,8 +420,11 @@
   const tbody =
     document.getElementById('teachers-tbody');
   tbody.innerHTML = '';
+
+  const count = data.teachers
+    ? data.teachers.length : 0;
   document.getElementById('total-teachers')
-    .textContent = data.teachers ? data.teachers.length : 0;
+    .textContent = count;
 
   if (!data.teachers || data.teachers.length === 0) {
     tbody.innerHTML =
@@ -443,11 +446,14 @@
         </span>
       </td>
       <td>
-        <button class="btn-approve"
-                style="background:#0f3460;
-                       margin-bottom:4px"
-                onclick="manageClasses(${t.id},
-                  '${t.name}')">
+        <button
+          style="background:#0f3460;color:white;
+                 border:none;padding:6px 12px;
+                 border-radius:6px;cursor:pointer;
+                 font-size:12px;font-weight:600"
+          onclick="manageClasses(
+            ${t.id}, '${t.name}'
+          )">
           📚 Classes
         </button>
       </td>

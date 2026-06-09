@@ -122,18 +122,23 @@ def register_teacher():
 
 # ─── PRINCIPAL ROUTES ────────────────────────────────────────────
 
-@app.route('/api/v1/principal/pending-teachers', methods=['GET'])
+@app.route('/api/v1/principal/pending-teachers',
+           methods=['GET'])
 @principal_required
 def get_pending_teachers():
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
-                SELECT u.id, u.username, u.is_approved,
-                       t.name, t.email, t.subject_specialization
+                SELECT t.id, u.id as user_id,
+                       u.username, u.is_approved,
+                       t.name, t.email,
+                       t.subject_specialization
                 FROM users u
                 JOIN teachers t ON u.id = t.user_id
-                WHERE u.role='teacher' AND u.is_approved=0
+                WHERE u.role='teacher'
+                AND u.is_approved=0
+                ORDER BY t.name
             """)
             return jsonify({'pending': cursor.fetchall()})
     finally:
@@ -178,18 +183,22 @@ def get_all_students():
     finally:
         conn.close()
 
-@app.route('/api/v1/principal/all-teachers', methods=['GET'])
+@app.route('/api/v1/principal/all-teachers',
+           methods=['GET'])
 @principal_required
 def get_all_teachers():
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
             cursor.execute("""
-                SELECT u.id, u.username, u.is_approved,
-                       t.name, t.email, t.subject_specialization
+                SELECT t.id, u.id as user_id,
+                       u.username, u.is_approved,
+                       t.name, t.email,
+                       t.subject_specialization
                 FROM users u
                 JOIN teachers t ON u.id = t.user_id
                 WHERE u.role='teacher'
+                ORDER BY t.name
             """)
             return jsonify({'teachers': cursor.fetchall()})
     finally:
@@ -735,7 +744,7 @@ def teacher_get_all_students():
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            # Get teacher_id from user_id
+            # Get teacher record from user_id
             cursor.execute(
                 "SELECT id FROM teachers WHERE user_id=%s",
                 (user_id,)
@@ -743,46 +752,33 @@ def teacher_get_all_students():
             teacher = cursor.fetchone()
 
             if not teacher:
-                return jsonify({'students': []})
+                return jsonify({'students': [], 'classes': []})
 
             teacher_id = teacher['id']
 
-            # Get classes this teacher teaches
+            # Get classes assigned to this teacher
             cursor.execute(
                 """SELECT class_section
                    FROM teacher_classes
-                   WHERE teacher_id=%s""",
+                   WHERE teacher_id=%s
+                   ORDER BY class_section""",
                 (teacher_id,)
             )
             classes = cursor.fetchall()
-
-            if not classes:
-                # If no class assigned yet
-                # show all students (fallback)
-                cursor.execute("""
-                    SELECT s.id, s.name,
-                           s.class_section,
-                           s.roll_number,
-                           COALESCE(
-                             ROUND(
-                               SUM(CASE WHEN a.status='Present'
-                                   THEN 1 ELSE 0 END) /
-                               NULLIF(COUNT(a.id), 0) * 100, 2
-                             ), 0
-                           ) as attendance_pct
-                    FROM students s
-                    LEFT JOIN attendance a
-                    ON s.id = a.student_id
-                    GROUP BY s.id
-                    ORDER BY s.class_section, s.roll_number
-                """)
-                return jsonify({'students': cursor.fetchall()})
-
-            # Get class sections list
             class_sections = [c['class_section'] for c in classes]
-            placeholders = ','.join(['%s'] * len(class_sections))
 
-            # Get only students from teacher's classes
+            if not class_sections:
+                # No classes assigned yet
+                return jsonify({
+                    'students': [],
+                    'classes': [],
+                    'message': 'No classes assigned yet. Contact principal.'
+                })
+
+            # Get students from assigned classes only
+            placeholders = ','.join(
+                ['%s'] * len(class_sections)
+            )
             cursor.execute(f"""
                 SELECT s.id, s.name,
                        s.class_section,
@@ -803,7 +799,10 @@ def teacher_get_all_students():
             """, class_sections)
 
             students = cursor.fetchall()
-            return jsonify({'students': students})
+            return jsonify({
+                'students': students,
+                'classes': class_sections
+            })
     finally:
         conn.close()
 
