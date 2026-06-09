@@ -705,14 +705,18 @@
     window.location.href = 'index.html';
   }
 
-  function switchTab(name, btn) {
-    document.querySelectorAll('.tab')
-      .forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-content')
-      .forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-' + name)
-      .classList.add('active');
+  // FIND AND REPLACE YOUR OLD SWITCHTAB WITH THIS ONE:
+  function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  
+  event.target.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+
+  // Fetch fresh data ONLY when the teacher purposefully clicks the students tab
+  if (name === 'students') {
+    loadStudents();
+  }
   }
 
   function togglePassword(inputId, btn) {
@@ -1514,25 +1518,6 @@
     });
 
   loadStudents();
-
-  // Auto refresh student list every 30 seconds
-// This ensures class changes by principal
-// are reflected immediately
-setInterval(() => {
-  const activeTab = document.querySelector(
-    '.tab-content.active'
-  );
-  if (activeTab && activeTab.id === 'tab-students') {
-    loadStudents();
-  }
-}, 30000);
-
-// Also refresh when tab becomes visible again
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) {
-    loadStudents();
-  }
-});
 
 </script>
 </body>
