@@ -6,7 +6,7 @@ from flask_jwt_extended import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 from db_config import get_connection
-from risk_analyzer import analyze_risk
+from risk_analyzer import analyze_student_metrics
 from functools import wraps
 import datetime
 
