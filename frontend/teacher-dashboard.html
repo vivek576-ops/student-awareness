@@ -866,55 +866,35 @@
     };
 
     const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${s.id}</td>
-      <td><strong>${s.name}</strong></td>
-      <td>${s.class_section}</td>
-      <td>${s.roll_number || '—'}</td>
-      <td>
-        <span class="badge ${attPct >= 75 ?
-          'bg-success' : 'bg-danger'}">
-          ${attPct}%
-        </span>
-      </td>
-      <td>
-        <span class="badge ${avgMarks >= 40 ?
-          'bg-success' : 'bg-danger'}">
-          ${avgMarks}%
-        </span>
-      </td>
-      <td>${badges[riskLevel]}</td>
-      <td>
+
+  // Helper function (place this outside the loop, at the top of your script)
+    const getBadgeClass = (level) => {
+    if (level.includes('HIGH')) return 'background: #ffe0e0; color: #c0392b; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: block; margin-bottom: 4px;';
+    if (level.includes('MEDIUM')) return 'background: #fff3cd; color: #856404; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: block; margin-bottom: 4px;';
+    return 'background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: block;';
+  };
+
+  tr.innerHTML = `
+    <td>${s.id}</td>
+    <td><strong>${s.name}</strong></td>
+    <td>${s.class_section}</td>
+    <td>${s.roll_number || '—'}</td>
+    <td>${s.attendance_percentage}</td>
+    <td>${s.average_marks}</td>
+    <td>
+        <span style="${getBadgeClass(s.attendance_risk)}">Att: ${s.attendance_risk}</span>
+        <span style="${getBadgeClass(s.academic_risk)}">Grades: ${s.academic_risk}</span>
+    </td>
+    <td>
         <div class="action-btns">
-          <button class="btn-action btn-notify"
-                  onclick="notify(${s.id})"
-                  title="Notify Parent">
-            📧
-          </button>
-          <button class="btn-action btn-view"
-                  onclick="viewStudent(${s.id})"
-                  title="View Details">
-            👁️
-          </button>
-          <button class="btn-action btn-edit"
-                  onclick="editStudent(
-                    ${s.id},
-                    '${s.name}',
-                    '${s.class_section}',
-                    '${s.roll_number || ''}'
-                  )"
-                  title="Edit Student">
-            ✏️
-          </button>
-          <button class="btn-action btn-delete"
-                  onclick="deleteStudent(${s.id})"
-                  title="Delete Student">
-            🗑️
-          </button>
+          <button class="btn-action btn-notify" onclick="notify(${s.id})" title="Notify Parent">📧</button>
+          <button class="btn-action btn-view" onclick="viewStudent(${s.id})" title="View Details">👁️</button>
+          <button class="btn-action btn-edit" onclick="editStudent(${s.id}, '${s.name}', '${s.class_section}', '${s.roll_number || ''}')" title="Edit Student">✏️</button>
+          <button class="btn-action btn-delete" onclick="deleteStudent(${s.id})" title="Delete Student">🗑️</button>
         </div>
-      </td>
+    </td>
     `;
-    tbody.appendChild(tr);
+  tbody.appendChild(tr);
   }
 
   const count = allStudents.length;

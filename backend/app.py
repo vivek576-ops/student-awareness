@@ -1165,5 +1165,60 @@ def get_teacher_assigned_classes(teacher_id):
     finally:
         conn.close()
 
+from risk_analyzer import analyze_student_metrics
+
+@app.route('/api/v1/teacher/students', methods=['GET'])
+@teacher_required  # Keep your existing authentication decorator if you have one
+def get_teacher_students():
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            # 1. Fetch all students along with their calculated attendance and average marks directly
+            query = """
+                SELECT 
+                    s.id, 
+                    s.name, 
+                    s.class_section, 
+                    s.roll_no,
+                    COALESCE((SUM(CASE WHEN a.status = 'Present' THEN 1 ELSE 0 END) / COUNT(a.id) * 100), 0) as attendance_percentage,
+                    COALESCE(AVG(m.marks_obtained / m.max_marks * 100), 0) as average_marks_percentage
+                FROM students s
+                LEFT JOIN attendance a ON s.id = a.student_id
+                LEFT JOIN marks m ON s.id = m.student_id
+                GROUP BY s.id;
+            """
+            cursor.execute(query)
+            database_results = cursor.fetchall()
+
+            students_list = []
+            for row in database_results:
+                # 2. Extract calculations cleanly from the database response
+                raw_att = round(float(row['attendance_percentage']), 2)
+                raw_marks = round(float(row['average_marks_percentage']), 2)
+                
+                # Mock trend to 0 if not tracking it incrementally over time yet
+                raw_trend = 0.0 
+
+                # 3. Process metrics through the independent AI engines
+                analysis = analyze_student_metrics(raw_att, raw_marks, raw_trend)
+
+                # 4. Format the final output package for your JavaScript dashboard
+                students_list.append({
+                    'id': row['id'],
+                    'name': row['name'],
+                    'class_section': row['class_section'],
+                    'roll_no': row['roll_no'],
+                    'attendance_percentage': f"{raw_att}%",
+                    'average_marks': f"{raw_marks}%",
+                    'attendance_risk': f"{analysis['attendance']['level']} ({analysis['attendance']['percentage']}%)",
+                    'academic_risk': f"{analysis['academic']['level']} ({analysis['academic']['percentage']}%)"
+                })
+
+            return jsonify(students_list)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
+
 if __name__ == '__main__':
     app.run(debug=True)
