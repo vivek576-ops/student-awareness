@@ -1,13 +1,13 @@
-import pymysql
 import os
-
-DB_CONFIG = {
-    'host': os.environ.get('DB_HOST', 'sql12.freesqldatabase.com'),
-    'user': os.environ.get('DB_USER', 'sql12829118'),
-    'password': os.environ.get('DB_PASSWORD', '3BRxxtucEu'),
-    'database': os.environ.get('DB_NAME', 'sql12829118'),
-    'cursorclass': pymysql.cursors.DictCursor
-}
+import pymysql
 
 def get_connection():
-    return pymysql.connect(**DB_CONFIG)
+    return pymysql.connect(
+        host=os.environ.get('DB_HOST'),
+        port=int(os.environ.get('DB_PORT', 13629)),
+        user=os.environ.get('DB_USER'),
+        password=os.environ.get('DB_PASSWORD'),
+        database=os.environ.get('DB_NAME'),
+        ssl={'ca': None},
+        cursorclass=pymysql.cursors.DictCursor
+    )
