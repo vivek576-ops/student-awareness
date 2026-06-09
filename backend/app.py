@@ -727,28 +727,83 @@ def add_student():
     finally:
         conn.close()
 
-# ─── TEACHER GET ALL STUDENTS ────────────────────────────────────
+# ─── TEACHER GET THEIR OWN CLASS STUDENTS ONLY ───────────────────
 @app.route('/api/v1/teacher/all-students', methods=['GET'])
 @teacher_required
 def teacher_get_all_students():
+    user_id = get_jwt_identity()
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute("""
-                SELECT s.id, s.name, s.class_section,
+            # Get teacher_id from user_id
+            cursor.execute(
+                "SELECT id FROM teachers WHERE user_id=%s",
+                (user_id,)
+            )
+            teacher = cursor.fetchone()
+
+            if not teacher:
+                return jsonify({'students': []})
+
+            teacher_id = teacher['id']
+
+            # Get classes this teacher teaches
+            cursor.execute(
+                """SELECT class_section
+                   FROM teacher_classes
+                   WHERE teacher_id=%s""",
+                (teacher_id,)
+            )
+            classes = cursor.fetchall()
+
+            if not classes:
+                # If no class assigned yet
+                # show all students (fallback)
+                cursor.execute("""
+                    SELECT s.id, s.name,
+                           s.class_section,
+                           s.roll_number,
+                           COALESCE(
+                             ROUND(
+                               SUM(CASE WHEN a.status='Present'
+                                   THEN 1 ELSE 0 END) /
+                               NULLIF(COUNT(a.id), 0) * 100, 2
+                             ), 0
+                           ) as attendance_pct
+                    FROM students s
+                    LEFT JOIN attendance a
+                    ON s.id = a.student_id
+                    GROUP BY s.id
+                    ORDER BY s.class_section, s.roll_number
+                """)
+                return jsonify({'students': cursor.fetchall()})
+
+            # Get class sections list
+            class_sections = [c['class_section'] for c in classes]
+            placeholders = ','.join(['%s'] * len(class_sections))
+
+            # Get only students from teacher's classes
+            cursor.execute(f"""
+                SELECT s.id, s.name,
+                       s.class_section,
                        s.roll_number,
                        COALESCE(
                          ROUND(
-                           SUM(CASE WHEN a.status='Present' 
+                           SUM(CASE WHEN a.status='Present'
                                THEN 1 ELSE 0 END) /
                            NULLIF(COUNT(a.id), 0) * 100, 2
                          ), 0
                        ) as attendance_pct
                 FROM students s
-                LEFT JOIN attendance a ON s.id = a.student_id
+                LEFT JOIN attendance a
+                ON s.id = a.student_id
+                WHERE s.class_section IN ({placeholders})
                 GROUP BY s.id
-            """)
-            return jsonify({'students': cursor.fetchall()})
+                ORDER BY s.class_section, s.roll_number
+            """, class_sections)
+
+            students = cursor.fetchall()
+            return jsonify({'students': students})
     finally:
         conn.close()
 
@@ -1006,6 +1061,112 @@ def edit_student(student_id):
         return jsonify({
             'message': 'Student updated successfully'
         })
+    finally:
+        conn.close()
+
+# ─── GET TEACHER'S ASSIGNED CLASSES ──────────────────────────────
+@app.route('/api/v1/teacher/my-classes', methods=['GET'])
+@teacher_required
+def get_teacher_classes():
+    user_id = get_jwt_identity()
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT id FROM teachers WHERE user_id=%s",
+                (user_id,)
+            )
+            teacher = cursor.fetchone()
+            if not teacher:
+                return jsonify({'classes': []})
+
+            cursor.execute(
+                """SELECT class_section
+                   FROM teacher_classes
+                   WHERE teacher_id=%s
+                   ORDER BY class_section""",
+                (teacher['id'],)
+            )
+            classes = cursor.fetchall()
+            return jsonify({'classes': classes})
+    finally:
+        conn.close()
+
+# ─── PRINCIPAL ASSIGN CLASS TO TEACHER ───────────────────────────
+@app.route('/api/v1/principal/assign-class', methods=['POST'])
+@principal_required
+def assign_class_to_teacher():
+    data = request.get_json()
+    teacher_id = data.get('teacher_id')
+    class_section = data.get('class_section')
+
+    if not teacher_id or not class_section:
+        return jsonify({'error': 'teacher_id and class_section required'}), 400
+
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Check if already assigned
+            cursor.execute(
+                """SELECT id FROM teacher_classes
+                   WHERE teacher_id=%s AND class_section=%s""",
+                (teacher_id, class_section)
+            )
+            if cursor.fetchone():
+                return jsonify({
+                    'error': 'Class already assigned to this teacher'
+                }), 409
+
+            cursor.execute(
+                """INSERT INTO teacher_classes
+                   (teacher_id, class_section)
+                   VALUES (%s, %s)""",
+                (teacher_id, class_section)
+            )
+        conn.commit()
+        return jsonify({
+            'message': f'Class {class_section} assigned successfully'
+        })
+    finally:
+        conn.close()
+
+# ─── PRINCIPAL REMOVE CLASS FROM TEACHER ─────────────────────────
+@app.route('/api/v1/principal/remove-class', methods=['POST'])
+@principal_required
+def remove_class_from_teacher():
+    data = request.get_json()
+    teacher_id = data.get('teacher_id')
+    class_section = data.get('class_section')
+
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                """DELETE FROM teacher_classes
+                   WHERE teacher_id=%s AND class_section=%s""",
+                (teacher_id, class_section)
+            )
+        conn.commit()
+        return jsonify({'message': 'Class removed successfully'})
+    finally:
+        conn.close()
+
+# ─── PRINCIPAL GET TEACHER'S CLASSES ─────────────────────────────
+@app.route('/api/v1/principal/teacher-classes/<int:teacher_id>',
+           methods=['GET'])
+@principal_required
+def get_teacher_assigned_classes(teacher_id):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                """SELECT class_section
+                   FROM teacher_classes
+                   WHERE teacher_id=%s
+                   ORDER BY class_section""",
+                (teacher_id,)
+            )
+            return jsonify({'classes': cursor.fetchall()})
     finally:
         conn.close()
 

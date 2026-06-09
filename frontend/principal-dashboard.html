@@ -115,6 +115,53 @@
       text-align:center; color:#999;
       padding:24px; font-size:13px;
     }
+    .modal-overlay {
+  display:none; position:fixed;
+  top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.5);
+  z-index:1000; align-items:center;
+  justify-content:center; padding:16px;
+  }
+  .modal-overlay.active { display:flex; }
+  .modal {
+  background:white; border-radius:16px;
+  padding:24px; width:100%; max-width:500px;
+  position:relative; max-height:90vh;
+  overflow-y:auto;
+  }
+  .modal h3 {
+  font-size:17px; color:#1a1a2e;
+  margin-bottom:12px;
+  }
+  .modal-close {
+  position:absolute; top:14px; right:14px;
+  background:#f0f2f5; border:none;
+  width:30px; height:30px; border-radius:50%;
+  cursor:pointer; font-size:15px;
+  }
+  .class-badge {
+  display:inline-flex; align-items:center;
+  gap:6px; padding:4px 10px;
+  background:#d4edda; color:#155724;
+  border-radius:20px; font-size:12px;
+  font-weight:600;
+  }
+  .class-badge button {
+  background:none; border:none;
+  cursor:pointer; color:#c0392b;
+  font-size:14px; padding:0;
+  line-height:1;
+  }
+  .ok-msg {
+  background:#d4edda; color:#155724;
+  padding:10px; border-radius:8px;
+  font-size:13px; display:none;
+  }
+  .err-msg {
+  background:#ffe0e0; color:#c0392b;
+  padding:10px; border-radius:8px;
+  font-size:13px; display:none;
+  }
   </style>
 </head>
 <body>
@@ -217,12 +264,12 @@
             <tr>
               <th>Name</th><th>Email</th>
               <th>Subject</th><th>Status</th>
-              <th>Action</th>
+              <th>Classes</th><th>Delete</th>
             </tr>
           </thead>
           <tbody id="teachers-tbody">
             <tr>
-              <td colspan="5" class="empty-state">
+              <td colspan="6" class="empty-state">
                 Loading...
               </td>
             </tr>
@@ -368,43 +415,52 @@
   }
 
   async function loadTeachers() {
-    const data =
-      await apiFetch('/principal/all-teachers');
-    const tbody =
-      document.getElementById('teachers-tbody');
-    tbody.innerHTML = '';
-    document.getElementById('total-teachers').textContent =
-      data.teachers ? data.teachers.length : 0;
+  const data =
+    await apiFetch('/principal/all-teachers');
+  const tbody =
+    document.getElementById('teachers-tbody');
+  tbody.innerHTML = '';
+  document.getElementById('total-teachers')
+    .textContent = data.teachers ? data.teachers.length : 0;
 
-    if (!data.teachers || data.teachers.length === 0) {
-      tbody.innerHTML =
-        '<tr><td colspan="5" class="empty-state">' +
-        'No teachers found</td></tr>';
-      return;
-    }
-
-    data.teachers.forEach(t => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${t.name}</td>
-        <td>${t.email}</td>
-        <td>${t.subject_specialization || '—'}</td>
-        <td>
-          <span class="badge ${t.is_approved ?
-            'bg-success' : 'bg-warning'}">
-            ${t.is_approved ? '✅ Active' : '⏳ Pending'}
-          </span>
-        </td>
-        <td>
-          <button class="btn-delete"
-                  onclick="deleteTeacher(${t.id})">
-            🗑️ Delete
-          </button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
+  if (!data.teachers || data.teachers.length === 0) {
+    tbody.innerHTML =
+      '<tr><td colspan="6" class="empty-state">' +
+      'No teachers found</td></tr>';
+    return;
   }
+
+  data.teachers.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${t.name}</td>
+      <td>${t.email}</td>
+      <td>${t.subject_specialization || '—'}</td>
+      <td>
+        <span class="badge ${t.is_approved ?
+          'bg-success' : 'bg-warning'}">
+          ${t.is_approved ? '✅ Active' : '⏳ Pending'}
+        </span>
+      </td>
+      <td>
+        <button class="btn-approve"
+                style="background:#0f3460;
+                       margin-bottom:4px"
+                onclick="manageClasses(${t.id},
+                  '${t.name}')">
+          📚 Classes
+        </button>
+      </td>
+      <td>
+        <button class="btn-delete"
+                onclick="deleteTeacher(${t.id})">
+          🗑️ Delete
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
 
   async function loadStudents() {
     const data =
@@ -446,6 +502,159 @@
   loadPending();
   loadTeachers();
   loadStudents();
+
+  let currentTeacherId = null;
+
+  async function manageClasses(teacherId, teacherName) {
+  currentTeacherId = teacherId;
+  document.getElementById('modal-teacher-name')
+    .textContent = teacherName;
+  document.getElementById('class-ok').style.display = 'none';
+  document.getElementById('class-err').style.display = 'none';
+  document.getElementById('class-modal')
+    .classList.add('active');
+  await loadAssignedClasses(teacherId);
+  }
+
+  async function loadAssignedClasses(teacherId) {
+  const data = await apiFetch(
+    `/principal/teacher-classes/${teacherId}`
+  );
+  const container =
+    document.getElementById('assigned-classes');
+  container.innerHTML = '';
+
+  if (!data.classes || data.classes.length === 0) {
+    container.innerHTML =
+      '<span style="color:#999;font-size:13px">' +
+      'No classes assigned yet</span>';
+    return;
+  }
+
+  data.classes.forEach(c => {
+    const badge = document.createElement('span');
+    badge.className = 'class-badge';
+    badge.innerHTML = `
+      ${c.class_section}
+      <button onclick="removeClass(
+        ${teacherId}, '${c.class_section}'
+      )" title="Remove">✕</button>
+    `;
+    container.appendChild(badge);
+  });
+}
+
+  async function assignClass() {
+  const classSection =
+    document.getElementById('new-class-select').value;
+  const okMsg = document.getElementById('class-ok');
+  const errMsg = document.getElementById('class-err');
+  okMsg.style.display = 'none';
+  errMsg.style.display = 'none';
+
+  if (!classSection) {
+    errMsg.textContent = '❌ Please select a class';
+    errMsg.style.display = 'block';
+    return;
+  }
+
+  const res = await apiFetch(
+    '/principal/assign-class', 'POST', {
+      teacher_id: currentTeacherId,
+      class_section: classSection
+    }
+  );
+
+  if (res.message) {
+    okMsg.textContent = '✅ ' + res.message;
+    okMsg.style.display = 'block';
+    document.getElementById('new-class-select').value = '';
+    await loadAssignedClasses(currentTeacherId);
+    setTimeout(() => okMsg.style.display = 'none', 2000);
+  } else {
+    errMsg.textContent =
+      '❌ ' + (res.error || 'Failed to assign class');
+    errMsg.style.display = 'block';
+  }
+}
+
+  async function removeClass(teacherId, classSection) {
+  const res = await apiFetch(
+    '/principal/remove-class', 'POST', {
+      teacher_id: teacherId,
+      class_section: classSection
+    }
+  );
+  if (res.message) {
+    await loadAssignedClasses(teacherId);
+  } else {
+    alert('❌ Failed to remove class');
+  }
+}
+
+  function closeClassModal() {
+  document.getElementById('class-modal')
+    .classList.remove('active');
+  currentTeacherId = null;
+}
+
+  document.getElementById('class-modal')
+  .addEventListener('click', function(e) {
+    if (e.target === this) closeClassModal();
+  });
 </script>
+<!-- Class Management Modal -->
+<div class="modal-overlay" id="class-modal">
+  <div class="modal" style="max-width:500px">
+    <button class="modal-close"
+            onclick="closeClassModal()">✕</button>
+    <h3>📚 Manage Classes for <span id="modal-teacher-name"></span></h3>
+    <p style="color:#555;font-size:13px;margin-bottom:16px">
+      Assign or remove class sections for this teacher.
+      Teacher will only see students from assigned classes.
+    </p>
+
+    <div style="margin-bottom:16px">
+      <label style="font-size:12px;font-weight:700;
+                    color:#555;text-transform:uppercase">
+        Currently Assigned Classes:
+      </label>
+      <div id="assigned-classes"
+           style="margin-top:8px;display:flex;
+                  flex-wrap:wrap;gap:6px">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <select id="new-class-select"
+              style="flex:1;padding:10px;
+                     border:2px solid #e0e0e0;
+                     border-radius:8px;font-size:14px">
+        <option value="">-- Select Class to Assign --</option>
+        <option value="1-A">Class 1-A</option>
+        <option value="2-A">Class 2-A</option>
+        <option value="3-A">Class 3-A</option>
+        <option value="4-A">Class 4-A</option>
+        <option value="5-A">Class 5-A</option>
+        <option value="6-A">Class 6-A</option>
+        <option value="7-A">Class 7-A</option>
+        <option value="8-A">Class 8-A</option>
+        <option value="9-A">Class 9-A</option>
+        <option value="10-A">Class 10-A</option>
+      </select>
+      <button onclick="assignClass()"
+              style="background:#155724;color:white;
+                     border:none;padding:10px 16px;
+                     border-radius:8px;cursor:pointer;
+                     font-weight:600">
+        ➕ Assign
+      </button>
+    </div>
+    <p class="ok-msg" id="class-ok"
+       style="margin-top:10px"></p>
+    <p class="err-msg" id="class-err"
+       style="margin-top:10px"></p>
+  </div>
+</div>
 </body>
 </html>
