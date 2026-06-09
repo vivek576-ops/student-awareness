@@ -152,11 +152,18 @@ def approve_teacher(user_id):
     try:
         with conn.cursor() as cursor:
             cursor.execute(
-                "UPDATE users SET is_approved=1 WHERE id=%s AND role='teacher'",
+                """UPDATE users SET is_approved=1
+                   WHERE id=%s AND role='teacher'""",
                 (user_id,)
             )
+            if cursor.rowcount == 0:
+                return jsonify({
+                    'error': 'Teacher not found'
+                }), 404
         conn.commit()
-        return jsonify({'message': 'Teacher approved successfully'})
+        return jsonify({
+            'message': 'Teacher approved successfully'
+        })
     finally:
         conn.close()
 
