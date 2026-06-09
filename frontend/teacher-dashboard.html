@@ -8,14 +8,12 @@
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'Segoe UI',sans-serif; background:#f0f2f5; }
-
     .navbar {
       background:linear-gradient(135deg,#155724,#1e8449);
       color:white; padding:16px 20px;
       display:flex; justify-content:space-between;
       align-items:center; flex-wrap:wrap; gap:10px;
     }
-    .navbar h2 { font-size:18px; }
     .navbar-btns { display:flex; gap:8px; }
     .btn-settings {
       background:rgba(255,255,255,0.2);
@@ -28,23 +26,14 @@
       padding:8px 16px; border-radius:6px;
       cursor:pointer; font-size:13px;
     }
-
     .container { padding:16px; }
-
     .stats-grid {
       display:grid;
       grid-template-columns:repeat(4,1fr);
       gap:12px; margin-bottom:20px;
     }
     @media(max-width:768px) {
-      .stats-grid {
-        grid-template-columns:repeat(2,1fr);
-      }
-    }
-    @media(max-width:480px) {
-      .stats-grid {
-        grid-template-columns:1fr 1fr;
-      }
+      .stats-grid { grid-template-columns:repeat(2,1fr); }
     }
     .stat-card {
       background:white; border-radius:12px;
@@ -57,7 +46,6 @@
     .stat-card .label {
       font-size:12px; color:#888; margin-top:4px;
     }
-
     .tabs {
       display:flex; gap:6px; margin-bottom:20px;
       flex-wrap:wrap;
@@ -74,7 +62,6 @@
     }
     .tab-content { display:none; }
     .tab-content.active { display:block; }
-
     .section-card {
       background:white; border-radius:12px;
       padding:20px; margin-bottom:20px;
@@ -86,8 +73,6 @@
       border-bottom:2px solid #f0f2f5;
       padding-bottom:10px;
     }
-
-    /* Responsive Table */
     .table-wrapper {
       width:100%; overflow-x:auto;
       -webkit-overflow-scrolling:touch;
@@ -107,7 +92,6 @@
       vertical-align:middle;
     }
     tr:hover td { background:#f8f9fa; }
-
     .badge {
       padding:4px 10px; border-radius:20px;
       font-size:11px; font-weight:600;
@@ -116,8 +100,6 @@
     .bg-danger  { background:#ffe0e0; color:#c0392b; }
     .bg-warning { background:#fff3cd; color:#856404; }
     .bg-success { background:#d4edda; color:#155724; }
-
-    /* Action Buttons */
     .action-btns {
       display:flex; gap:4px; flex-wrap:wrap;
     }
@@ -131,8 +113,6 @@
     .btn-view   { background:#0f3460; color:white; }
     .btn-edit   { background:#27ae60; color:white; }
     .btn-delete { background:#e74c3c; color:white; }
-
-    /* Forms */
     .form-group { margin-bottom:14px; }
     .form-group label {
       display:block; font-size:11px;
@@ -143,44 +123,29 @@
     .form-group select {
       width:100%; padding:10px 14px;
       border:2px solid #e0e0e0;
-      border-radius:8px; font-size:14px;
-      outline:none;
+      border-radius:8px; font-size:14px; outline:none;
     }
     .form-group input:focus,
-    .form-group select:focus {
-      border-color:#155724;
-    }
-    .form-group.password-wrap {
-      position:relative;
-    }
-    .form-group.password-wrap input {
-      padding-right:44px;
-    }
+    .form-group select:focus { border-color:#155724; }
+    .form-group.password-wrap { position:relative; }
+    .form-group.password-wrap input { padding-right:44px; }
     .toggle-pwd {
       position:absolute; right:12px; top:34px;
       background:none; border:none;
       cursor:pointer; font-size:18px; color:#888;
     }
-
     .form-grid-3 {
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
+      display:grid; grid-template-columns:repeat(3,1fr);
       gap:12px;
     }
     .form-grid-2 {
-      display:grid;
-      grid-template-columns:1fr 1fr;
+      display:grid; grid-template-columns:1fr 1fr;
       gap:12px;
     }
     @media(max-width:768px) {
-      .form-grid-3 {
-        grid-template-columns:1fr;
-      }
-      .form-grid-2 {
-        grid-template-columns:1fr;
-      }
+      .form-grid-3 { grid-template-columns:1fr; }
+      .form-grid-2 { grid-template-columns:1fr; }
     }
-
     .btn-submit {
       background:#155724; color:white;
       border:none; padding:12px 24px;
@@ -189,7 +154,6 @@
       margin-top:8px; width:100%;
     }
     .btn-submit:hover { background:#0d3d18; }
-
     .ok-msg {
       color:#27ae60; font-size:13px;
       margin-top:10px; display:none;
@@ -202,14 +166,12 @@
       padding:10px; background:#ffe0e0;
       border-radius:8px; text-align:center;
     }
-
     .section-divider {
       font-size:14px; font-weight:700;
       color:#155724; margin:16px 0 10px;
       padding-bottom:6px;
       border-bottom:2px solid #d4edda;
     }
-
     .empty-state {
       text-align:center; color:#999;
       padding:24px; font-size:14px;
@@ -218,8 +180,6 @@
       text-align:center; color:#888;
       padding:20px; font-size:14px;
     }
-
-    /* Modals */
     .modal-overlay {
       display:none; position:fixed;
       top:0; left:0; width:100%; height:100%;
@@ -249,8 +209,7 @@
       gap:10px; margin-bottom:16px;
     }
     .detail-item {
-      background:#f8f9fa; border-radius:8px;
-      padding:10px;
+      background:#f8f9fa; border-radius:8px; padding:10px;
     }
     .detail-item .d-label {
       font-size:10px; color:#888;
@@ -265,10 +224,7 @@
       border-radius:10px; padding:14px;
       margin-bottom:16px;
     }
-    .warning-box p {
-      color:#856404; font-size:13px;
-      margin-bottom:6px;
-    }
+    .warning-box p { color:#856404; font-size:13px; }
     .action-btns-modal {
       display:flex; gap:8px; flex-wrap:wrap;
       margin-top:10px;
@@ -359,19 +315,19 @@
 
 <nav class="navbar">
   <div style="display:flex;align-items:center;gap:10px">
-  <img src="logo.png" alt="Logo"
-       style="width:36px;height:36px;
-              border-radius:50%;
-              background:white;padding:3px">
-  <div>
-    <div style="font-size:13px;font-weight:700">
-      👨‍🏫 Teacher Dashboard
-    </div>
-    <div style="font-size:10px;opacity:0.8">
-      Dr. Himasekhar Educational Institutions
+    <img src="logo.png" alt="Logo"
+         style="width:36px;height:36px;
+                border-radius:50%;
+                background:white;padding:3px">
+    <div>
+      <div style="font-size:13px;font-weight:700">
+        👨‍🏫 Teacher Dashboard
+      </div>
+      <div style="font-size:10px;opacity:0.8">
+        Dr. Himasekhar Educational Institutions
+      </div>
     </div>
   </div>
-</div>
   <div class="navbar-btns">
     <button class="btn-settings"
             onclick="window.location.href=
@@ -432,7 +388,7 @@
   <!-- STUDENTS TAB -->
   <div class="tab-content active" id="tab-students">
     <div class="section-card">
-      <h3>📊 Student Risk Overview</h3>
+      <h3>📊 My Class Students Overview</h3>
       <div class="table-wrapper">
         <table>
           <thead>
@@ -441,9 +397,9 @@
               <th>Name</th>
               <th>Class</th>
               <th>Roll No</th>
-              <th>Attendance</th>
-              <th>Avg Marks</th>
-              <th>Risk</th>
+              <th>Attendance %</th>
+              <th>Avg Marks %</th>
+              <th>Risk Level</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -705,18 +661,15 @@
     window.location.href = 'index.html';
   }
 
-  // FIND AND REPLACE YOUR OLD SWITCHTAB WITH THIS ONE:
-  function switchTab(name) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  
-  event.target.classList.add('active');
-  document.getElementById('tab-' + name).classList.add('active');
-
-  // Fetch fresh data ONLY when the teacher purposefully clicks the students tab
-  if (name === 'students') {
-    loadStudents();
-  }
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab')
+      .forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content')
+      .forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + name)
+      .classList.add('active');
+    if (name === 'students') loadStudents();
   }
 
   function togglePassword(inputId, btn) {
@@ -767,148 +720,160 @@
   }
 
   async function loadStudents() {
-  const tbody =
-    document.getElementById('students-tbody');
-  tbody.innerHTML =
-    '<tr><td colspan="8" class="loading">' +
-    'Loading students...</td></tr>';
+    const tbody =
+      document.getElementById('students-tbody');
+    tbody.innerHTML =
+      '<tr><td colspan="8" class="loading">' +
+      'Loading students...</td></tr>';
 
-  const data =
-    await apiFetch('/teacher/all-students');
+    const data = await apiFetch('/teacher/all-students');
 
-  // Show assigned classes info in stats
-  const classInfo = data.classes || [];
-
-  if (!data.students || data.students.length === 0) {
-    // Check if no classes assigned
-    if (data.message) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="8"
-              style="text-align:center;
-                     padding:30px">
-            <div style="background:#fff3cd;
-                        border:2px solid #ffc107;
-                        border-radius:10px;
-                        padding:20px;
-                        max-width:400px;
-                        margin:0 auto">
-              <div style="font-size:24px;
-                          margin-bottom:8px">
-                ⚠️
+    if (!data.students || data.students.length === 0) {
+      if (data.message) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align:center;
+                                   padding:30px">
+              <div style="background:#fff3cd;
+                          border:2px solid #ffc107;
+                          border-radius:10px;
+                          padding:20px;
+                          max-width:400px;
+                          margin:0 auto">
+                <div style="font-size:24px;
+                            margin-bottom:8px">⚠️</div>
+                <div style="font-weight:700;
+                            color:#856404;
+                            margin-bottom:6px">
+                  No Classes Assigned Yet
+                </div>
+                <div style="font-size:13px;
+                            color:#856404">
+                  Please contact the Principal to
+                  assign class sections to your account.
+                </div>
               </div>
-              <div style="font-weight:700;
-                          color:#856404;
-                          margin-bottom:6px">
-                No Classes Assigned Yet
-              </div>
-              <div style="font-size:13px;
-                          color:#856404">
-                Please contact the Principal to
-                assign class sections to your account.
-              </div>
-            </div>
-          </td>
-        </tr>`;
-    } else {
-      tbody.innerHTML =
-        '<tr><td colspan="8" class="empty-state">' +
-        'No students found in your assigned classes.' +
-        '</td></tr>';
+            </td>
+          </tr>`;
+      } else {
+        tbody.innerHTML =
+          '<tr><td colspan="8" class="empty-state">' +
+          'No students found in your assigned classes.' +
+          '</td></tr>';
+      }
+      document.getElementById('total-students')
+        .textContent = '0';
+      document.getElementById('high-risk')
+        .textContent = '0';
+      document.getElementById('avg-att')
+        .textContent = '0%';
+      document.getElementById('avg-marks')
+        .textContent = '0%';
+      return;
     }
+
+    allStudents = data.students;
+    populateDropdowns(allStudents);
+
+    tbody.innerHTML = '';
+    let highRisk = 0;
+    let totalAtt = 0;
+    let totalMarks = 0;
+
+    for (const s of allStudents) {
+      let avgMarks = 0;
+      let riskLevel = 'LOW';
+      let attPct = parseFloat(s.attendance_pct) || 0;
+
+      try {
+        const report = await apiFetch(`/report/${s.id}`);
+        avgMarks = report.average_marks_percentage || 0;
+      } catch(e) {}
+
+      try {
+        const risk = await apiFetch(
+          `/predict-risk/${s.id}`, 'POST'
+        );
+        riskLevel = risk.risk_level || 'LOW';
+        if (riskLevel === 'HIGH') highRisk++;
+      } catch(e) {}
+
+      totalAtt += attPct;
+      totalMarks += avgMarks;
+
+      const badges = {
+        HIGH:
+          '<span class="badge bg-danger">🔴 HIGH</span>',
+        MEDIUM:
+          '<span class="badge bg-warning">🟡 MEDIUM</span>',
+        LOW:
+          '<span class="badge bg-success">🟢 LOW</span>'
+      };
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${s.id}</td>
+        <td><strong>${s.name}</strong></td>
+        <td>${s.class_section}</td>
+        <td>${s.roll_number || '—'}</td>
+        <td>
+          <span class="badge ${attPct >= 75 ?
+            'bg-success' : 'bg-danger'}">
+            ${attPct}%
+          </span>
+        </td>
+        <td>
+          <span class="badge ${avgMarks >= 40 ?
+            'bg-success' : 'bg-danger'}">
+            ${avgMarks}%
+          </span>
+        </td>
+        <td>${badges[riskLevel]}</td>
+        <td>
+          <div class="action-btns">
+            <button class="btn-action btn-notify"
+                    onclick="notify(${s.id})"
+                    title="Notify Parent">
+              📧
+            </button>
+            <button class="btn-action btn-view"
+                    onclick="viewStudent(${s.id})"
+                    title="View Details">
+              👁️
+            </button>
+            <button class="btn-action btn-edit"
+                    onclick="editStudent(
+                      ${s.id},
+                      '${s.name}',
+                      '${s.class_section}',
+                      '${s.roll_number || ''}'
+                    )"
+                    title="Edit Student">
+              ✏️
+            </button>
+            <button class="btn-action btn-delete"
+                    onclick="deleteStudent(${s.id})"
+                    title="Delete Student">
+              🗑️
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    const count = allStudents.length;
     document.getElementById('total-students')
-      .textContent = '0';
+      .textContent = count;
     document.getElementById('high-risk')
-      .textContent = '0';
-    document.getElementById('avg-att')
-      .textContent = '0%';
-    document.getElementById('avg-marks')
-      .textContent = '0%';
-    return;
+      .textContent = highRisk;
+    document.getElementById('avg-att').textContent =
+      count > 0 ?
+        Math.round(totalAtt/count) + '%' : '0%';
+    document.getElementById('avg-marks').textContent =
+      count > 0 ?
+        Math.round(totalMarks/count) + '%' : '0%';
   }
-
-  allStudents = data.students;
-  populateDropdowns(allStudents);
-
-  tbody.innerHTML = '';
-  let highRisk = 0;
-  let totalAtt = 0;
-  let totalMarks = 0;
-
-  for (const s of allStudents) {
-    let avgMarks = 0;
-    let riskLevel = 'LOW';
-    let attPct = parseFloat(s.attendance_pct) || 0;
-
-    try {
-      const report = await apiFetch(`/report/${s.id}`);
-      avgMarks = report.average_marks_percentage || 0;
-    } catch(e) {}
-
-    try {
-      const risk = await apiFetch(
-        `/predict-risk/${s.id}`, 'POST'
-      );
-      riskLevel = risk.risk_level || 'LOW';
-      if (riskLevel === 'HIGH') highRisk++;
-    } catch(e) {}
-
-    totalAtt += attPct;
-    totalMarks += avgMarks;
-
-    const badges = {
-      HIGH:
-        '<span class="badge bg-danger">🔴 HIGH</span>',
-      MEDIUM:
-        '<span class="badge bg-warning">🟡 MEDIUM</span>',
-      LOW:
-        '<span class="badge bg-success">🟢 LOW</span>'
-    };
-
-    const tr = document.createElement('tr');
-
-  // Helper function (place this outside the loop, at the top of your script)
-    const getBadgeClass = (level) => {
-    if (level.includes('HIGH')) return 'background: #ffe0e0; color: #c0392b; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: block; margin-bottom: 4px;';
-    if (level.includes('MEDIUM')) return 'background: #fff3cd; color: #856404; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: block; margin-bottom: 4px;';
-    return 'background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: block;';
-  };
-
-  tr.innerHTML = `
-    <td>${s.id}</td>
-    <td><strong>${s.name}</strong></td>
-    <td>${s.class_section}</td>
-    <td>${s.roll_number || '—'}</td>
-    <td>${s.attendance_percentage}</td>
-    <td>${s.average_marks}</td>
-    <td>
-        <span style="${getBadgeClass(s.attendance_risk)}">Att: ${s.attendance_risk}</span>
-        <span style="${getBadgeClass(s.academic_risk)}">Grades: ${s.academic_risk}</span>
-    </td>
-    <td>
-        <div class="action-btns">
-          <button class="btn-action btn-notify" onclick="notify(${s.id})" title="Notify Parent">📧</button>
-          <button class="btn-action btn-view" onclick="viewStudent(${s.id})" title="View Details">👁️</button>
-          <button class="btn-action btn-edit" onclick="editStudent(${s.id}, '${s.name}', '${s.class_section}', '${s.roll_number || ''}')" title="Edit Student">✏️</button>
-          <button class="btn-action btn-delete" onclick="deleteStudent(${s.id})" title="Delete Student">🗑️</button>
-        </div>
-    </td>
-    `;
-  tbody.appendChild(tr);
-  }
-
-  const count = allStudents.length;
-  document.getElementById('total-students')
-    .textContent = count;
-  document.getElementById('high-risk')
-    .textContent = highRisk;
-  document.getElementById('avg-att').textContent =
-    count > 0 ?
-      Math.round(totalAtt/count) + '%' : '0%';
-  document.getElementById('avg-marks').textContent =
-    count > 0 ?
-      Math.round(totalMarks/count) + '%' : '0%';
-}
 
   async function viewStudent(studentId) {
     const [report, marksData] = await Promise.all([
@@ -1491,14 +1456,18 @@
   document.querySelectorAll('.modal-overlay')
     .forEach(overlay => {
       overlay.addEventListener('click', function(e) {
-        if (e.target === this) {
+        if (e.target === this)
           this.classList.remove('active');
-        }
       });
     });
 
-  loadStudents();
+  // Auto refresh when page becomes visible
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) loadStudents();
+  });
 
+  // Initialize
+  loadStudents();
 </script>
 </body>
 </html>
