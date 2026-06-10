@@ -9,5 +9,6 @@ def get_connection():
         password=os.environ.get('DB_PASSWORD'),
         database=os.environ.get('DB_NAME'),
         ssl_disabled=False,
+        connect_timeout=10,
         cursorclass=pymysql.cursors.DictCursor
     )
