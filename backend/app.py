@@ -59,14 +59,13 @@ def login():
                 "SELECT * FROM users WHERE username=%s", (username,)
             )
             user = cursor.fetchone()
-            if not user or not check_password_hash(
-                user['password_hash'], password
-            ):
-                return jsonify({'error': 'Invalid credentials'}), 401
+            if not user:
+                return jsonify({'error': 'User not found', 'username_tried': username}), 401
+            hash_check = check_password_hash(user['password_hash'], password)
+            if not hash_check:
+                return jsonify({'error': 'Wrong password', 'hash_start': user['password_hash'][:30]}), 401
             if not user['is_approved']:
-                return jsonify({
-                    'error': 'Account pending approval from Principal'
-                }), 403
+                return jsonify({'error': 'Account pending approval'}), 403
             token = create_access_token(
                 identity=str(user['id']),
                 additional_claims={'role': user['role']}
