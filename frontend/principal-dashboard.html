@@ -384,33 +384,46 @@
     });
   }
 
-  async function approveTeacher(userId, btn) {
-    await apiFetch(
-      `/principal/approve-teacher/${userId}`, 'POST'
-    );
-    btn.textContent = '✅ Approved';
-    btn.disabled = true;
-    btn.style.background = '#888';
-    loadPending();
-    loadTeachers();
+    async function approveTeacher(userId, btn) {
+      try {
+        const res = await apiFetch(
+            `/principal/approve-teacher/${userId}`, 'POST'
+        );
+        if (res.message) {
+            btn.textContent = '✅ Approved';
+            btn.disabled = true;
+            btn.style.background = '#888';
+            setTimeout(() => {
+                loadPending();
+                loadTeachers();
+                loadStats();
+            }, 500);
+        } else {
+            alert('❌ Failed: ' + (res.error || 'Unknown error'));
+        }
+    } catch(e) {
+        alert('❌ Connection error');
+    }
   }
 
   async function deleteTeacher(userId) {
-    if (!confirm(
-      'Are you sure you want to delete this teacher?'
-    )) return;
-
-    const res = await apiFetch(
-      `/principal/delete-teacher/${userId}`, 'DELETE'
-    );
-
-    if (res.message) {
-      alert('✅ Teacher deleted successfully!');
-      loadTeachers();
-      loadPending();
-    } else {
-      alert('❌ Failed: ' +
-        (res.error || 'Unknown error'));
+    if (!confirm('Are you sure you want to delete this teacher?')) return;
+    try {
+        const res = await apiFetch(
+            `/principal/delete-teacher/${userId}`, 'DELETE'
+        );
+        if (res.message) {
+            alert('✅ Teacher deleted successfully!');
+            setTimeout(() => {
+                loadTeachers();
+                loadPending();
+                loadStats();
+            }, 500);
+        } else {
+            alert('❌ Failed: ' + (res.error || 'Unknown error'));
+        }
+    } catch(e) {
+        alert('❌ Connection error: ' + e.message);
     }
   }
 

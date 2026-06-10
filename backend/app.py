@@ -984,11 +984,11 @@ def change_username():
         conn.close()
 
     # ─── DELETE TEACHER ───────────────────────────────────────────────
-    @app.route('/api/v1/principal/delete-teacher/<int:user_id>',
-           methods=['DELETE'])
-    @principal_required
-    def delete_teacher(user_id):
-        conn = get_connection()
+@app.route('/api/v1/principal/delete-teacher/<int:user_id>',
+       methods=['DELETE'])
+@principal_required
+def delete_teacher(user_id):
+    conn = get_connection()
     try:
         with conn.cursor() as cursor:
             cursor.execute(
@@ -996,17 +996,13 @@ def change_username():
                 (user_id,)
             )
             if not cursor.fetchone():
-                return jsonify({
-                    'error': 'Teacher not found'
-                }), 404
+                return jsonify({'error': 'Teacher not found'}), 404
             cursor.execute(
                 "DELETE FROM users WHERE id=%s",
                 (user_id,)
             )
         conn.commit()
-        return jsonify({
-            'message': 'Teacher deleted successfully'
-        })
+        return jsonify({'message': 'Teacher deleted successfully'})
     finally:
         conn.close()
 
