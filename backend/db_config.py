@@ -8,6 +8,6 @@ def get_connection():
         user=os.environ.get('DB_USER'),
         password=os.environ.get('DB_PASSWORD'),
         database=os.environ.get('DB_NAME'),
-        ssl={'ca': None},
+        ssl_disabled=False,
         cursorclass=pymysql.cursors.DictCursor
     )
