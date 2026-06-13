@@ -1177,7 +1177,7 @@ def get_teacher_assigned_classes(teacher_id):
     finally:
         conn.close()
 
-from risk_analyzer import analyze_student_metrics
+from risk_analyzer import analyze_risk
 
 @app.route('/api/v1/teacher/students', methods=['GET'])
 @teacher_required  # Keep your existing authentication decorator if you have one
@@ -1212,7 +1212,7 @@ def get_teacher_students():
                 raw_trend = 0.0 
 
                 # 3. Process metrics through the independent AI engines
-                analysis = analyze_student_metrics(raw_att, raw_marks, raw_trend)
+                analysis = analyze_risk(raw_att, raw_marks, raw_trend)
 
                 # 4. Format the final output package for your JavaScript dashboard
                 students_list.append({
