@@ -494,18 +494,28 @@ def predict_risk(student_id):
 
             # 2. Call our updated split analytics engine
             from risk_analyzer import analyze_risk
-            # ✅ PASTE THIS NEW LINE INSTEAD:
+            
+            # This captures the unified risk level string and confidence decimal from your new code
             risk_profiles, confidence = analyze_risk(att_pct, avg_marks, marks_trend=trend)
 
+            # Dynamically calculate the custom guidance based on the new risk outcome
+            if risk_profiles == 'HIGH':
+                guidance = "Immediate counselor attention required. Schedule academic review panel."
+            elif risk_profiles == 'MEDIUM':
+                guidance = "Monitor performance closely. Suggest remedial session checkpoints."
+            else:
+                guidance = "Student metrics are healthy and stable. Maintain standard curriculum."
+
             # 3. Store both metric channels inside our newly updated schema
+            # Updated to insert the verified single risk level and confidence values directly
             cursor.execute("""
                 INSERT INTO risk_flags 
                 (student_id, attendance_risk_level, attendance_risk_percentage, academic_risk_level, academic_risk_percentage) 
                 VALUES (%s, %s, %s, %s, %s)
             """, (
                 student_id, 
-                risk_profiles["attendance"]["level"], risk_profiles["attendance"]["percentage"],
-                risk_profiles["academic"]["level"], risk_profiles["academic"]["percentage"]
+                risk_profiles, confidence,
+                risk_profiles, confidence
             ))
             conn.commit()
 
