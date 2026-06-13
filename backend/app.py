@@ -6,7 +6,7 @@ from flask_jwt_extended import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 from db_config import get_connection
-from risk_analyzer import analyze_student_metrics
+from risk_analyzer import analyze_risk
 from functools import wraps
 import datetime
 
@@ -493,9 +493,9 @@ def predict_risk(student_id):
             trend = round(scores[0] - scores[-1], 2) if len(scores) >= 2 else 0
 
             # 2. Call our updated split analytics engine
-            from risk_analyzer import analyze_student_metrics, get_universal_guidance
-            risk_profiles = analyze_student_metrics(att_pct, avg_marks, trend)
-            guidance = get_universal_guidance(risk_profiles, avg_marks, trend)
+            from risk_analyzer import analyze_risk
+            # ✅ PASTE THIS NEW LINE INSTEAD:
+            risk_profiles, confidence = analyze_risk(att_pct, avg_marks, marks_trend=trend)
 
             # 3. Store both metric channels inside our newly updated schema
             cursor.execute("""
