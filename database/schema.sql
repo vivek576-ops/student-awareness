@@ -71,13 +71,17 @@ CREATE TABLE marks (
   FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE
 );
 
+DROP TABLE IF EXISTS risk_flags;
+
 CREATE TABLE risk_flags (
   id INT AUTO_INCREMENT PRIMARY KEY,
   student_id INT NOT NULL,
-  risk_level ENUM('LOW','MEDIUM','HIGH') NOT NULL,
-  confidence_score FLOAT NOT NULL,
+  attendance_risk_level ENUM('LOW', 'MEDIUM', 'HIGH') NOT NULL,
+  attendance_risk_percentage FLOAT NOT NULL,
+  academic_risk_level ENUM('LOW', 'MEDIUM', 'HIGH') NOT NULL,
+  academic_risk_percentage FLOAT NOT NULL,
   calculated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
+  FOREIGN KEY (student_id) REFERENCES students (id) ON DELETE CASCADE
 );
 
 CREATE TABLE wellness_logs (
