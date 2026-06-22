@@ -538,22 +538,22 @@
         (report.average_marks_percentage || 0) + '%';
 
       try {
-        const risk =
-          await apiFetch(`/predict-risk/${id}`, 'POST');
-        const badges = {
-          HIGH:
-            '<span class="badge bg-danger">🔴 HIGH</span>',
-          MEDIUM:
-            '<span class="badge bg-warning">🟡 MEDIUM</span>',
-          LOW:
-            '<span class="badge bg-success">🟢 LOW</span>'
-        };
-        document.getElementById('risk-display').innerHTML =
-          badges[risk.risk_level] || badges['LOW'];
-      } catch(e) {
-        document.getElementById('risk-display').innerHTML =
-          '<span class="badge bg-success">🟢 LOW</span>';
-      }
+      const risk =
+        await apiFetch(`/predict-risk/${id}`, 'POST');
+      const badges = {
+        HIGH:
+          '<span class="badge bg-danger">🔴 HIGH</span>',
+        MEDIUM:
+          '<span class="badge bg-warning">🟡 MEDIUM</span>',
+        LOW:
+          '<span class="badge bg-success">🟢 LOW</span>'
+    };
+    document.getElementById('risk-display').innerHTML =
+     badges[risk.risk_level] || badges['LOW'];
+    } catch(e) {
+      document.getElementById('risk-display').innerHTML =
+        '<span class="badge bg-success">🟢 LOW</span>';
+    }
 
       const tbody =
         document.getElementById('marks-tbody');

@@ -793,9 +793,10 @@
       try {
         const risk = await apiFetch(
           `/predict-risk/${s.id}`, 'POST'
-        );
-        riskLevel = risk.risk_level || 'LOW';
-        if (riskLevel === 'HIGH') highRisk++;
+      );
+      // Make sure this reads risk_level not risk_analysis
+      riskLevel = risk.risk_level || 'LOW';
+      if (riskLevel === 'HIGH') highRisk++;
       } catch(e) {}
 
       totalAtt += attPct;
