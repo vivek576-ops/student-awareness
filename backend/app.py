@@ -9,6 +9,9 @@ from db_config import get_connection
 from risk_analyzer import analyze_risk
 from functools import wraps
 import datetime
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'super-secret-key-change-in-production'
@@ -447,18 +450,64 @@ def get_report(student_id):
 def _send_notify(student_id, conn):
     with conn.cursor() as cursor:
         cursor.execute("""
-            SELECT p.name, p.email, p.phone, s.name as student_name
+            SELECT p.name, p.email, p.phone,
+                   s.name as student_name,
+                   s.class_section
             FROM students s
             JOIN parents p ON s.parent_id = p.id
             WHERE s.id=%s
         """, (student_id,))
         parent = cursor.fetchone()
-    if parent:
-        print(
-            f"[MOCK ALERT] To: {parent['email']} | "
-            f"Phone: {parent['phone']} | "
-            f"Student: {parent['student_name']} needs attention."
-        )
+
+    if parent and parent['email']:
+        try:
+            sender_email = "drhimasekharalerts@gmail.com"
+            sender_password = "iycf wugh gdjn opgf"
+
+            msg = MIMEMultipart()
+            msg['From'] = sender_email
+            msg['To'] = parent['email']
+            msg['Subject'] = (
+                f"⚠️ Alert: {parent['student_name']} "
+                f"Needs Your Attention"
+            )
+
+            body = f"""
+Dear {parent['name']},
+
+This is an automated alert from
+Dr. Himasekhar Educational Institutions.
+
+Your child {parent['student_name']}
+(Class: {parent['class_section']})
+requires your attention regarding
+academic performance or attendance.
+
+Please contact the class teacher
+or visit the school for more details.
+
+Regards,
+Dr. Himasekhar Educational Institutions
+Vijayawada, Andhra Pradesh
+            """
+
+            msg.attach(MIMEText(body, 'plain'))
+
+            server = smtplib.SMTP(
+                'smtp.gmail.com', 587
+            )
+            server.starttls()
+            server.login(
+                sender_email, sender_password
+            )
+            server.send_message(msg)
+            server.quit()
+
+            print(
+                f"✅ Email sent to {parent['email']}"
+            )
+        except Exception as e:
+            print(f"❌ Email failed: {e}")
 
 @app.route('/api/v1/notify', methods=['POST'])
 @teacher_required
