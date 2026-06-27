@@ -10,11 +10,12 @@ from risk_analyzer import analyze_risk
 from functools import wraps
 import datetime
 import smtplib
+import os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
-app.config['JWT_SECRET_KEY'] = 'super-secret-key-change-in-production'
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(hours=8)
 CORS(app)
 jwt = JWTManager(app)
@@ -459,8 +460,8 @@ def _send_notify(student_id, conn):
 
     if parent and parent['email']:
         try:
-            sender_email = "drhimasekharalerts@gmail.com"
-            sender_password = "iycf wugh gdjn opgf"
+            sender_email = os.environ.get('SENDER_EMAIL')
+            sender_password = os.environ.get('SENDER_PASSWORD')
 
             msg = MIMEMultipart()
             msg['From'] = sender_email
@@ -1232,4 +1233,4 @@ def get_teacher_assigned_classes(teacher_id):
 from risk_analyzer import analyze_risk
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
