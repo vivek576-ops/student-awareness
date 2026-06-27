@@ -861,7 +861,7 @@ def teacher_get_all_students():
                 ON s.id = a.student_id
                 WHERE s.class_section IN ({placeholders})
                 GROUP BY s.id
-                ORDER BY s.class_section, s.roll_number
+                ORDER BY s.name ASC
             """, class_sections)
 
             students = cursor.fetchall()
