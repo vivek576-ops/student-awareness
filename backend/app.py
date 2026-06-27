@@ -439,8 +439,6 @@ def get_report(student_id):
             'average_marks_percentage': avg_marks,
             'alert': att_pct < 75 or avg_marks < 40
         }
-        if report['alert']:
-            _send_notify(student_id, conn)
         return jsonify(report)
     finally:
         conn.close()
